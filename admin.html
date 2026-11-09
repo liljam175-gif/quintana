@@ -399,6 +399,68 @@
 
     .add-row { margin-top: 0.4rem; }
 
+    .subhead {
+      margin: 1.8rem 0 0.35rem;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .subhead:first-of-type { margin-top: 0.6rem; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .check-field {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin: 0 0 1rem;
+      font-size: 0.86rem;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .check-field input { width: 1.05rem; height: 1.05rem; accent-color: var(--rose); }
+
+    .file-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.2rem;
+      border: 1px solid #ffd0dd;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--rose-deep);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 12px 26px -18px rgba(185, 47, 97, 0.6);
+      transition: background 0.18s, transform 0.18s;
+    }
+
+    .file-btn:hover { background: #fff2f7; transform: translateY(-1px); }
+    .file-btn input { display: none; }
+
+    .music-upload {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin: 0 0 1rem;
+    }
+
+    .music-upload .hint {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+    }
+
     /* ---------- Photos ---------- */
 
     .photo-list {
@@ -504,6 +566,7 @@
       .photo-list { grid-template-columns: 1fr; }
       .item-grid,
       .dates-grid,
+      .two-col,
       .quiz-item .item-grid { grid-template-columns: 1fr; }
       .item-grid .field:last-child { grid-column: auto; }
       .tabs { border-radius: 18px; }
@@ -554,6 +617,7 @@
           <button type="button" data-tab="quiz">Quiz</button>
           <button type="button" data-tab="dates">Dates</button>
           <button type="button" data-tab="letter">Letter</button>
+          <button type="button" data-tab="extras">Extras</button>
         </nav>
 
         <div class="actions">
@@ -651,6 +715,95 @@
           <span>P.S.</span>
           <textarea id="letterPostscript" rows="2"></textarea>
         </label>
+      </div>
+
+      <!-- Extras -->
+      <div class="panel" data-panel="extras">
+        <h2>Extras</h2>
+        <p class="hint">
+          The rotating notes and letters, the music player, the live call, and the new game decks.
+        </p>
+
+        <h3 class="subhead">Rotating notes</h3>
+        <p class="hint">One note per line. A new one appears after the last is read.</p>
+        <label class="field">
+          <span>Notes</span>
+          <textarea id="extrasNotes" rows="8"></textarea>
+        </label>
+
+        <h3 class="subhead">Rotating letters</h3>
+        <p class="hint">
+          The first letter is the main one; the rest rotate in after she reads each. Paragraphs are
+          separated by a blank line.
+        </p>
+        <div id="lettersList"></div>
+        <div class="add-row">
+          <button class="btn ghost small" id="addLetter" type="button">+ Add letter</button>
+        </div>
+
+        <h3 class="subhead">Music</h3>
+        <p class="hint">
+          Leave <code>src</code> empty to use the built-in generated track. Add an MP3 URL or path to
+          use your own song.
+        </p>
+        <label class="check-field">
+          <input id="musicAutoplay" type="checkbox" />
+          <span>Try to autoplay when the site opens</span>
+        </label>
+        <div class="music-upload">
+          <label class="file-btn">
+            Upload a song
+            <input id="musicUpload" type="file" accept="audio/*" />
+          </label>
+          <span class="hint" id="musicUploadNote">
+            MP3, M4A, WAV, OGG · max 30 MB. Uploaded songs are saved in <code>music/</code>.
+          </span>
+        </div>
+        <div id="musicTracks"></div>
+        <div class="add-row">
+          <button class="btn ghost small" id="addTrack" type="button">+ Add track</button>
+        </div>
+
+        <h3 class="subhead">Live call</h3>
+        <p class="hint">Leave the room blank and a private room is generated for you.</p>
+        <div class="two-col">
+          <label class="field">
+            <span>Room name</span>
+            <input id="liveRoom" type="text" placeholder="catie-and-me" />
+          </label>
+          <label class="field">
+            <span>Service URL</span>
+            <input id="liveService" type="text" placeholder="https://meet.jit.si/" />
+          </label>
+        </div>
+
+        <h3 class="subhead">Game decks</h3>
+        <p class="hint">One prompt per line.</p>
+        <div class="options-grid">
+          <label class="field">
+            <span>Truths</span>
+            <textarea id="extrasTruths" rows="8"></textarea>
+          </label>
+          <label class="field">
+            <span>Dares</span>
+            <textarea id="extrasDares" rows="8"></textarea>
+          </label>
+          <label class="field">
+            <span>Audition prompts</span>
+            <textarea id="extrasAudition" rows="8"></textarea>
+          </label>
+          <label class="field">
+            <span>Dance moves</span>
+            <textarea id="extrasDance" rows="8"></textarea>
+          </label>
+        </div>
+
+        <h3 class="subhead">Couples trivia</h3>
+        <p class="hint">Four options per question. Pick the correct answer.</p>
+        <div id="triviaList"></div>
+        <div class="add-row">
+          <button class="btn ghost small" id="addTrivia" type="button">+ Add trivia question</button>
+        </div>
       </div>
     </section>
   </main>
@@ -792,6 +945,36 @@
           ? next.letter.paragraphs
           : [];
 
+        next.letters = Array.isArray(next.letters) ? next.letters : [];
+        next.letters.forEach((letter) => {
+          if (!letter || typeof letter !== "object") return;
+          letter.paragraphs = Array.isArray(letter.paragraphs) ? letter.paragraphs : [];
+        });
+
+        next.notes = Array.isArray(next.notes) ? next.notes : [];
+
+        next.music = next.music || {};
+        next.music.autoplay = next.music.autoplay !== false;
+        next.music.opening = next.music.opening || "";
+        next.music.tracks = Array.isArray(next.music.tracks) ? next.music.tracks : [];
+
+        next.live = next.live || {};
+        next.live.room = next.live.room || "";
+        next.live.service = next.live.service || "https://meet.jit.si/";
+
+        next.truths = Array.isArray(next.truths) ? next.truths : [];
+        next.dares = Array.isArray(next.dares) ? next.dares : [];
+        next.audition = Array.isArray(next.audition) ? next.audition : [];
+        next.danceMoves = Array.isArray(next.danceMoves) ? next.danceMoves : [];
+
+        next.couplesTrivia = Array.isArray(next.couplesTrivia) ? next.couplesTrivia : [];
+        next.couplesTrivia.forEach((question) => {
+          if (!question || typeof question !== "object") return;
+          question.options = Array.isArray(question.options) && question.options.length
+            ? question.options
+            : ["", "", "", ""];
+        });
+
         return next;
       }
 
@@ -829,6 +1012,224 @@
         $("#letterParagraphs").value = (letter.paragraphs || []).join("\n\n");
         $("#letterSignature").value = letter.signature || "";
         $("#letterPostscript").value = letter.postscript || "";
+      }
+
+      /* ---------------- Render: extras ---------------- */
+
+      function linesToList(value) {
+        return value
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean);
+      }
+
+      function paragraphsToList(value) {
+        return value
+          .split(/\n\s*\n/)
+          .map((paragraph) => paragraph.trim())
+          .filter(Boolean);
+      }
+
+      function renderLetters() {
+        const list = $("#lettersList");
+        list.innerHTML = "";
+
+        state.content.letters.forEach((letter, index) => {
+          const item = document.createElement("div");
+          item.className = "item";
+
+          const head = document.createElement("div");
+          head.className = "item-head";
+          const label = document.createElement("strong");
+          label.textContent = `Letter ${index + 1}`;
+          head.append(
+            label,
+            removeButton(() => {
+              state.content.letters.splice(index, 1);
+              renderLetters();
+            })
+          );
+
+          item.append(
+            head,
+            field(
+              "Salutation",
+              textInput(letter.salutation, (value) => { letter.salutation = value; })
+            ),
+            field(
+              "Paragraphs",
+              textBox(
+                (letter.paragraphs || []).join("\n\n"),
+                (value) => { letter.paragraphs = paragraphsToList(value); },
+                8
+              ),
+              "Separate paragraphs with a blank line."
+            ),
+            field(
+              "Signature",
+              textInput(letter.signature, (value) => { letter.signature = value; })
+            ),
+            field(
+              "P.S.",
+              textBox(letter.postscript, (value) => { letter.postscript = value; }, 2)
+            )
+          );
+
+          list.appendChild(item);
+        });
+      }
+
+      function renderTracks() {
+        const list = $("#musicTracks");
+        list.innerHTML = "";
+
+        state.content.music.tracks.forEach((track, index) => {
+          const item = document.createElement("div");
+          item.className = "item";
+
+          const head = document.createElement("div");
+          head.className = "item-head";
+          const label = document.createElement("strong");
+          label.textContent = `Track ${index + 1}`;
+          head.append(
+            label,
+            removeButton(() => {
+              state.content.music.tracks.splice(index, 1);
+              renderTracks();
+            })
+          );
+
+          item.append(
+            head,
+            field(
+              "Title",
+              textInput(track.title, (value) => { track.title = value; })
+            ),
+            field(
+              "Artist",
+              textInput(track.artist, (value) => { track.artist = value; })
+            ),
+            field(
+              "Audio URL (optional)",
+              textInput(track.src || "", (value) => { track.src = value; }, {
+                placeholder: "https://example.com/song.mp3"
+              }),
+              "Leave empty to use the built-in generated music."
+            )
+          );
+
+          const opening = state.content.music.opening || "";
+          const openingWrap = document.createElement("label");
+          openingWrap.className = "check-field";
+          const radio = document.createElement("input");
+          radio.type = "radio";
+          radio.name = "openingTrack";
+          radio.checked = Boolean(opening) && (opening === track.src || opening === track.title);
+          radio.addEventListener("change", () => {
+            state.content.music.opening = track.src || track.title || "";
+            renderTracks();
+            showToast("Opening song updated. Save changes to publish.");
+          });
+          const openingText = document.createElement("span");
+          openingText.textContent = "Play this first when the site opens";
+          openingWrap.append(radio, openingText);
+          item.appendChild(openingWrap);
+
+          list.appendChild(item);
+        });
+      }
+
+      function renderTrivia() {
+        const list = $("#triviaList");
+        list.innerHTML = "";
+
+        state.content.couplesTrivia.forEach((question, index) => {
+          question.options = Array.isArray(question.options) && question.options.length
+            ? question.options
+            : ["", "", "", ""];
+
+          const item = document.createElement("div");
+          item.className = "item quiz-item";
+
+          const head = document.createElement("div");
+          head.className = "item-head";
+          const label = document.createElement("strong");
+          label.textContent = `Trivia ${index + 1}`;
+          head.append(
+            label,
+            removeButton(() => {
+              state.content.couplesTrivia.splice(index, 1);
+              renderTrivia();
+            })
+          );
+
+          item.appendChild(head);
+          item.appendChild(
+            field(
+              "Question",
+              textInput(question.question, (value) => { question.question = value; })
+            )
+          );
+
+          const optionsGrid = document.createElement("div");
+          optionsGrid.className = "options-grid";
+          question.options.forEach((option, optionIndex) => {
+            optionsGrid.appendChild(
+              field(
+                `Option ${optionIndex + 1}`,
+                textInput(option, (value) => {
+                  question.options[optionIndex] = value;
+                  refreshAnswerSelect();
+                })
+              )
+            );
+          });
+          item.appendChild(optionsGrid);
+
+          const answerSelect = document.createElement("select");
+          answerSelect.addEventListener("change", () => {
+            question.answer = answerSelect.value;
+          });
+
+          function refreshAnswerSelect() {
+            answerSelect.innerHTML = "";
+            question.options.forEach((option, optionIndex) => {
+              const choice = document.createElement("option");
+              choice.value = option;
+              choice.textContent = option || `Option ${optionIndex + 1}`;
+              answerSelect.appendChild(choice);
+            });
+            if (!question.options.includes(question.answer)) {
+              question.answer = question.options[0] || "";
+            }
+            answerSelect.value = question.answer;
+          }
+          refreshAnswerSelect();
+
+          item.appendChild(field("Correct answer", answerSelect));
+          item.appendChild(
+            field(
+              "Fun note",
+              textInput(question.note, (value) => { question.note = value; })
+            )
+          );
+
+          list.appendChild(item);
+        });
+      }
+
+      function renderExtras() {
+        $("#extrasNotes").value = state.content.notes.join("\n");
+        $("#extrasTruths").value = state.content.truths.join("\n");
+        $("#extrasDares").value = state.content.dares.join("\n");
+        $("#extrasAudition").value = state.content.audition.join("\n");
+        $("#extrasDance").value = state.content.danceMoves.join("\n");
+        $("#liveRoom").value = state.content.live.room || "";
+        $("#liveService").value = state.content.live.service || "";
+        $("#musicAutoplay").checked = state.content.music.autoplay !== false;
+        renderLetters();
+        renderTracks();
+        renderTrivia();
       }
 
       /* ---------------- Render: reasons ---------------- */
@@ -1107,6 +1508,90 @@
         });
       }
 
+      function fileToDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(reader.error || new Error("Could not read that file."));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function downloadBlob(blob, filename) {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        window.setTimeout(() => URL.revokeObjectURL(link.href), 1500);
+      }
+
+      function prettySongTitle(filename) {
+        return String(filename || "Uploaded song")
+          .replace(/\.[^.]+$/, "")
+          .replace(/[_-]+/g, " ")
+          .replace(/\s+/g, " ")
+          .trim() || "Uploaded song";
+      }
+
+      async function uploadMusic(fileInput) {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        if (file.size > 30 * 1024 * 1024) {
+          showToast("That song is larger than 30 MB. Try a smaller file.", true);
+          fileInput.value = "";
+          return;
+        }
+        const title = prettySongTitle(file.name);
+
+        if (state.api) {
+          try {
+            setStatus("Uploading song…");
+            const dataUrl = await fileToDataUrl(file);
+            const data = await request("/api/music", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "x-admin-pin": state.pin
+              },
+              body: JSON.stringify({ filename: file.name, dataUrl })
+            });
+            const item = data.item || {};
+            const track = {
+              title: item.title || title,
+              artist: "from you",
+              src: item.path,
+              mood: "warm"
+            };
+            state.content.music.tracks.unshift(track);
+            state.content.music.opening = item.path;
+            renderTracks();
+            await saveContent();
+            showToast("Song uploaded and set as the opening track.");
+          } catch (error) {
+            showToast(error.message, true);
+          } finally {
+            setStatus("");
+            fileInput.value = "";
+          }
+          return;
+        }
+
+        // Static hosting: download the file so it can be added to the repo.
+        const safeName = String(file.name || "song.mp3").replace(/[^a-zA-Z0-9._-]+/g, "-");
+        downloadBlob(file, safeName);
+        const track = {
+          title,
+          artist: "from you",
+          src: `music/${safeName}`,
+          mood: "warm"
+        };
+        state.content.music.tracks.unshift(track);
+        state.content.music.opening = track.src;
+        renderTracks();
+        showToast("Song downloaded. Add it to the music/ folder, then upload content.js.", true);
+        fileInput.value = "";
+      }
+
       async function uploadPhoto(fileInput, slot) {
         const file = fileInput.files && fileInput.files[0];
         if (!file) return;
@@ -1213,6 +1698,7 @@
         renderQuiz();
         renderDates();
         renderLetter();
+        renderExtras();
       }
 
       function showGate(message) {
@@ -1333,6 +1819,60 @@
       });
       $("#letterPostscript").addEventListener("input", (event) => {
         state.content.letter.postscript = event.target.value;
+      });
+
+      $("#extrasNotes").addEventListener("input", (event) => {
+        state.content.notes = linesToList(event.target.value);
+      });
+      $("#extrasTruths").addEventListener("input", (event) => {
+        state.content.truths = linesToList(event.target.value);
+      });
+      $("#extrasDares").addEventListener("input", (event) => {
+        state.content.dares = linesToList(event.target.value);
+      });
+      $("#extrasAudition").addEventListener("input", (event) => {
+        state.content.audition = linesToList(event.target.value);
+      });
+      $("#extrasDance").addEventListener("input", (event) => {
+        state.content.danceMoves = linesToList(event.target.value);
+      });
+      $("#liveRoom").addEventListener("input", (event) => {
+        state.content.live.room = event.target.value.trim();
+      });
+      $("#liveService").addEventListener("input", (event) => {
+        state.content.live.service = event.target.value.trim();
+      });
+      $("#musicAutoplay").addEventListener("change", (event) => {
+        state.content.music.autoplay = event.target.checked;
+      });
+
+      $("#addLetter").addEventListener("click", () => {
+        state.content.letters.push({
+          salutation: "",
+          paragraphs: [],
+          signature: "",
+          postscript: ""
+        });
+        renderLetters();
+      });
+
+      $("#addTrack").addEventListener("click", () => {
+        state.content.music.tracks.push({ title: "", artist: "", src: "", mood: "warm" });
+        renderTracks();
+      });
+
+      $("#musicUpload").addEventListener("change", () => {
+        uploadMusic($("#musicUpload"));
+      });
+
+      $("#addTrivia").addEventListener("click", () => {
+        state.content.couplesTrivia.push({
+          question: "",
+          options: ["", "", "", ""],
+          answer: "",
+          note: ""
+        });
+        renderTrivia();
       });
 
       $("#addReason").addEventListener("click", () => {

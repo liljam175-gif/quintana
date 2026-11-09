@@ -9,6 +9,10 @@ start-all.bat
 catie-site.zip
 publish-update.bat
 
+# Server-only uploads (stored on this computer, not GitHub Pages)
+media/
+media.json
+
 # OS junk
 Thumbs.db
 desktop.ini
