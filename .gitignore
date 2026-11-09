@@ -1,0 +1,14 @@
+# Local-only files — never publish these
+admin-key.txt
+content.js.bak
+content.json
+server.js
+start-site.bat
+start-tunnel.bat
+start-all.bat
+catie-site.zip
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store

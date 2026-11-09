@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin · For Catie 💗</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Quicksand:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --rose: #e86a92;
+      --rose-deep: #b92f61;
+      --ink: #3d2530;
+      --ink-soft: #7c5a67;
+      --cream: #fff8f5;
+      --line: #ffd9e4;
+      --good: #16794a;
+      --bad: #b3264f;
+      --shadow: 0 24px 60px -34px rgba(185, 47, 97, 0.55);
+    }
+
+    * { box-sizing: border-box; }
+
+    [hidden] { display: none !important; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(900px 500px at 10% -10%, #ffe7ee, transparent 60%),
+        radial-gradient(800px 500px at 110% 10%, #fff0e0, transparent 55%),
+        var(--cream);
+      color: var(--ink);
+      font-family: "Quicksand", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    h1, h2, h3 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    a { color: var(--rose-deep); }
+
+    .admin-top {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem clamp(1rem, 4vw, 2rem);
+      background: rgba(255, 248, 245, 0.86);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .admin-top strong {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.25rem;
+    }
+
+    .admin-top strong span { color: var(--rose); }
+
+    .admin-top .top-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .admin-top .top-links a,
+    .admin-top .top-links button {
+      color: var(--ink-soft);
+      text-decoration: none;
+      background: none;
+      border: none;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .admin-top .top-links a:hover,
+    .admin-top .top-links button:hover { color: var(--rose-deep); }
+
+    .admin-wrap {
+      width: min(1100px, 100% - 2rem);
+      margin: 0 auto;
+      padding: clamp(1.6rem, 5vw, 3.4rem) 0 5rem;
+    }
+
+    /* ---------- Gate ---------- */
+
+    .gate {
+      max-width: 460px;
+      margin: clamp(2rem, 10vh, 6rem) auto 0;
+      padding: clamp(1.6rem, 5vw, 2.6rem);
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .gate .lock { font-size: 2.4rem; line-height: 1; }
+
+    .gate h1 { margin: 0.7rem 0 0.3rem; font-size: 2.2rem; }
+
+    .gate p { margin: 0 auto 1.2rem; max-width: 34ch; color: var(--ink-soft); }
+
+    .gate code {
+      padding: 0.1rem 0.35rem;
+      border-radius: 5px;
+      background: #ffeef3;
+      color: var(--rose-deep);
+      font-size: 0.86em;
+    }
+
+    .gate form { display: flex; gap: 0.6rem; }
+
+    .gate input {
+      flex: 1;
+      min-width: 0;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      font: inherit;
+      font-size: 1.05rem;
+      letter-spacing: 0.25em;
+      text-align: center;
+      color: var(--ink);
+    }
+
+    .gate input:focus { outline: 2px solid #ffb8cf; outline-offset: 1px; }
+
+    .msg {
+      min-height: 1.4em;
+      margin: 0.9rem 0 0 !important;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--bad);
+    }
+
+    /* ---------- Buttons ---------- */
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.8rem 1.4rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+      color: #fff;
+      font: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 16px 30px -18px rgba(185, 47, 97, 0.85);
+      transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+    }
+
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 20px 34px -18px rgba(185, 47, 97, 0.9); }
+    .btn:active { transform: none; }
+    .btn:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--rose-deep);
+      border: 1px solid #ffc9da;
+      box-shadow: none;
+    }
+
+    .btn.ghost:hover { background: #fff0f5; }
+
+    .btn.small { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
+
+    /* ---------- Toolbar ---------- */
+
+    .mode-note {
+      margin: 0 0 1.2rem;
+      padding: 0.7rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      font-size: 0.84rem;
+      color: var(--ink-soft);
+    }
+
+    .mode-note b { color: var(--rose-deep); }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      padding: 0.3rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .tabs button {
+      padding: 0.5rem 0.9rem;
+      border: none;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink-soft);
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+
+    .tabs button:hover { color: var(--rose-deep); }
+
+    .tabs button.active {
+      background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+      color: #fff;
+      box-shadow: 0 10px 20px -14px rgba(185, 47, 97, 0.8);
+    }
+
+    .toolbar .actions {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .status {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--ink-soft);
+      min-height: 1em;
+    }
+
+    /* ---------- Panels ---------- */
+
+    .panel {
+      display: none;
+      padding: clamp(1.2rem, 3.5vw, 2rem);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+    }
+
+    .panel.active { display: block; animation: fade 0.3s ease; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .panel h2 {
+      margin: 0 0 0.3rem;
+      font-size: 1.9rem;
+    }
+
+    .panel > p.hint {
+      margin: 0 0 1.4rem;
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+    }
+
+    .field {
+      display: block;
+      margin-bottom: 0.9rem;
+    }
+
+    .field > span {
+      display: block;
+      margin-bottom: 0.32rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .field > small {
+      display: block;
+      margin-top: 0.28rem;
+      font-size: 0.74rem;
+      color: var(--ink-soft);
+      opacity: 0.8;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    textarea { resize: vertical; min-height: 3rem; }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      outline: 2px solid #ffb8cf;
+      outline-offset: 1px;
+      border-color: #ffb8cf;
+    }
+
+    .emoji-input { max-width: 6rem; font-size: 1.15rem; text-align: center; }
+
+    .item {
+      position: relative;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border: 1px solid #ffe3ea;
+      border-radius: 16px;
+      background: #fffafc;
+    }
+
+    .item-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .item-head strong {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .item-grid {
+      display: grid;
+      grid-template-columns: 6rem minmax(0, 1fr);
+      gap: 0.8rem;
+      align-items: start;
+    }
+
+    .item-grid .field:last-child { grid-column: 1 / -1; }
+
+    .dates-grid { grid-template-columns: 6rem minmax(0, 1fr); }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .quiz-item .item-grid { grid-template-columns: 6rem minmax(0, 1fr); }
+
+    .icon-btn {
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid #ffd0dd;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--rose-deep);
+      font: inherit;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+
+    .icon-btn:hover { background: #ffe9f0; }
+
+    .add-row { margin-top: 0.4rem; }
+
+    /* ---------- Photos ---------- */
+
+    .photo-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .photo-item {
+      padding: 0.7rem;
+      border: 1px solid #ffe3ea;
+      border-radius: 16px;
+      background: #fffafc;
+    }
+
+    .photo-preview {
+      position: relative;
+      display: grid;
+      place-items: center;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #ffe6ee, #ffd3df);
+      margin-bottom: 0.7rem;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-preview span {
+      position: absolute;
+      bottom: 0.4rem;
+      left: 0.4rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 6px;
+      background: rgba(61, 37, 48, 0.62);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .photo-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .photo-actions input[type="file"] {
+      width: 100%;
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+    }
+
+    .photo-actions input[type="file"]::file-selector-button {
+      margin-right: 0.5rem;
+      padding: 0.4rem 0.7rem;
+      border: 1px solid #ffc9da;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--rose-deep);
+      font: inherit;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ---------- Toast ---------- */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 1.4rem;
+      z-index: 60;
+      max-width: min(460px, calc(100vw - 2rem));
+      transform: translateX(-50%);
+      padding: 0.8rem 1.2rem;
+      border-radius: 14px;
+      background: #3d2530;
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: 0 20px 40px -18px rgba(0, 0, 0, 0.5);
+      animation: toast-in 0.25s ease;
+    }
+
+    .toast.bad { background: #8f1f43; }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translate(-50%, 10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    @media (max-width: 860px) {
+      .photo-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .options-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .photo-list { grid-template-columns: 1fr; }
+      .item-grid,
+      .dates-grid,
+      .quiz-item .item-grid { grid-template-columns: 1fr; }
+      .item-grid .field:last-child { grid-column: auto; }
+      .tabs { border-radius: 18px; }
+      .gate form { flex-direction: column; }
+      .toolbar { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <header class="admin-top">
+    <strong>C <span>♥</span> Q · Admin</strong>
+    <div class="top-links">
+      <a href="index.html" target="_blank" rel="noopener">View site ↗</a>
+      <button type="button" id="logoutBtn" hidden>Log out</button>
+    </div>
+  </header>
+
+  <main class="admin-wrap">
+    <p class="mode-note" id="modeNote">Checking connection…</p>
+
+    <!-- ================= PIN GATE ================= -->
+    <section class="gate" id="gate" hidden>
+      <div class="lock" aria-hidden="true">💌</div>
+      <h1>Admin dashboard</h1>
+      <p>Enter your PIN to edit Catie's site. It's saved in <code>admin-key.txt</code>.</p>
+      <form id="pinForm" autocomplete="off">
+        <input
+          id="pinInput"
+          type="password"
+          inputmode="numeric"
+          maxlength="12"
+          placeholder="PIN"
+          aria-label="Admin PIN"
+        />
+        <button class="btn" type="submit">Unlock</button>
+      </form>
+      <p class="msg" id="gateMsg" aria-live="polite"></p>
+    </section>
+
+    <!-- ================= APP ================= -->
+    <section id="app" hidden>
+      <div class="toolbar">
+        <nav class="tabs" id="tabs" aria-label="Editor sections">
+          <button type="button" data-tab="hero" class="active">Hero</button>
+          <button type="button" data-tab="compliments">Compliments</button>
+          <button type="button" data-tab="reasons">Reasons</button>
+          <button type="button" data-tab="photos">Photos</button>
+          <button type="button" data-tab="quiz">Quiz</button>
+          <button type="button" data-tab="dates">Dates</button>
+          <button type="button" data-tab="letter">Letter</button>
+        </nav>
+
+        <div class="actions">
+          <span class="status" id="status" aria-live="polite"></span>
+          <button class="btn" id="saveBtn" type="button">Save changes</button>
+          <button class="btn ghost" id="downloadBtn" type="button">Download content.js</button>
+        </div>
+      </div>
+
+      <!-- Hero -->
+      <div class="panel active" data-panel="hero">
+        <h2>Hero</h2>
+        <p class="hint">The first thing she sees. Keep it short and devastating.</p>
+        <label class="field">
+          <span>Tagline</span>
+          <textarea id="heroTagline" rows="2"></textarea>
+        </label>
+        <label class="field">
+          <span>Note line</span>
+          <input id="heroNote" type="text" />
+        </label>
+        <label class="field">
+          <span>Note aside</span>
+          <input id="heroNoteAside" type="text" />
+        </label>
+      </div>
+
+      <!-- Compliments -->
+      <div class="panel" data-panel="compliments">
+        <h2>Compliment machine</h2>
+        <p class="hint">One compliment per line. The machine picks them at random with no repeats.</p>
+        <label class="field">
+          <span>Compliments</span>
+          <textarea id="compliments" rows="14"></textarea>
+        </label>
+      </div>
+
+      <!-- Reasons -->
+      <div class="panel" data-panel="reasons">
+        <h2>Reasons I'm obsessed</h2>
+        <p class="hint">Each card is an emoji, a title, and a short reason.</p>
+        <div id="reasonsList"></div>
+        <div class="add-row">
+          <button class="btn ghost small" id="addReason" type="button">+ Add reason</button>
+        </div>
+      </div>
+
+      <!-- Photos -->
+      <div class="panel" data-panel="photos">
+        <h2>Photos</h2>
+        <p class="hint">
+          Upload a picture for each slot. They're resized and saved as
+          <code>photos/us-1.jpg</code> … <code>photos/us-6.jpg</code>.
+        </p>
+        <div class="photo-list" id="photosList"></div>
+      </div>
+
+      <!-- Quiz -->
+      <div class="panel" data-panel="quiz">
+        <h2>Quiz</h2>
+        <p class="hint">Four options per question. The correct answer unlocks its prize.</p>
+        <div id="quizList"></div>
+        <div class="add-row">
+          <button class="btn ghost small" id="addQuiz" type="button">+ Add question</button>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="panel" data-panel="dates">
+        <h2>Date spinner</h2>
+        <p class="hint">Every entry is a possible date idea on the wheel.</p>
+        <div id="datesList"></div>
+        <div class="add-row">
+          <button class="btn ghost small" id="addDate" type="button">+ Add date idea</button>
+        </div>
+      </div>
+
+      <!-- Letter -->
+      <div class="panel" data-panel="letter">
+        <h2>The letter</h2>
+        <p class="hint">Separate paragraphs with a blank line.</p>
+        <label class="field">
+          <span>Salutation</span>
+          <input id="letterSalutation" type="text" />
+        </label>
+        <label class="field">
+          <span>Paragraphs</span>
+          <textarea id="letterParagraphs" rows="14"></textarea>
+        </label>
+        <label class="field">
+          <span>Signature</span>
+          <input id="letterSignature" type="text" />
+        </label>
+        <label class="field">
+          <span>P.S.</span>
+          <textarea id="letterPostscript" rows="2"></textarea>
+        </label>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+      const state = {
+        api: false,
+        pin: sessionStorage.getItem("cq-admin-pin") || "",
+        content: null
+      };
+
+      /* ---------------- small DOM helpers ---------------- */
+
+      function field(labelText, control, hint) {
+        const wrap = document.createElement("label");
+        wrap.className = "field";
+
+        const label = document.createElement("span");
+        label.textContent = labelText;
+        wrap.appendChild(label);
+        wrap.appendChild(control);
+
+        if (hint) {
+          const small = document.createElement("small");
+          small.textContent = hint;
+          wrap.appendChild(small);
+        }
+        return wrap;
+      }
+
+      function textInput(value, onInput, attrs) {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = value || "";
+        Object.entries(attrs || {}).forEach(([key, val]) => input.setAttribute(key, val));
+        input.addEventListener("input", () => onInput(input.value));
+        return input;
+      }
+
+      function textBox(value, onInput, rows) {
+        const area = document.createElement("textarea");
+        area.rows = rows || 3;
+        area.value = value || "";
+        area.addEventListener("input", () => onInput(area.value));
+        return area;
+      }
+
+      function removeButton(onClick) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "icon-btn";
+        button.title = "Remove";
+        button.setAttribute("aria-label", "Remove");
+        button.textContent = "✕";
+        button.addEventListener("click", onClick);
+        return button;
+      }
+
+      function setStatus(text) {
+        $("#status").textContent = text || "";
+      }
+
+      let toastTimer = null;
+      function showToast(message, isBad) {
+        const toast = $("#toast");
+        toast.textContent = message;
+        toast.classList.toggle("bad", Boolean(isBad));
+        toast.hidden = false;
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => {
+          toast.hidden = true;
+        }, 3600);
+      }
+
+      /* ---------------- API ---------------- */
+
+      async function request(path, options) {
+        const response = await fetch(path, options || {});
+        let data = {};
+        try {
+          data = await response.json();
+        } catch (error) {
+          data = {};
+        }
+        if (!response.ok) {
+          throw new Error(data.error || `Request failed (${response.status}).`);
+        }
+        return data;
+      }
+
+      async function checkApi() {
+        try {
+          const response = await fetch("/api/health", { cache: "no-store" });
+          if (!response.ok) return false;
+          const data = await response.json();
+          return data.ok === true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      async function verifyPin(pin) {
+        if (!state.api) return true;
+        try {
+          const data = await request("/api/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pin })
+          });
+          return data.ok === true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function normalize(content) {
+        const next = content && typeof content === "object" ? content : {};
+        next.hero = next.hero || {};
+        next.hero.tagline = next.hero.tagline || "";
+        next.hero.note = next.hero.note || "";
+        next.hero.noteAside = next.hero.noteAside || "";
+
+        next.compliments = Array.isArray(next.compliments) ? next.compliments : [];
+        next.reasons = Array.isArray(next.reasons) ? next.reasons : [];
+        next.photos = Array.isArray(next.photos) ? next.photos : [];
+        next.quiz = Array.isArray(next.quiz) ? next.quiz : [];
+        next.dateIdeas = Array.isArray(next.dateIdeas) ? next.dateIdeas : [];
+
+        next.letter = next.letter || {};
+        next.letter.paragraphs = Array.isArray(next.letter.paragraphs)
+          ? next.letter.paragraphs
+          : [];
+
+        return next;
+      }
+
+      async function loadContent() {
+        if (state.api) {
+          const data = await request("/api/content", { cache: "no-store" });
+          return data.content;
+        }
+
+        const response = await fetch("content.js", { cache: "no-store" });
+        if (!response.ok) throw new Error("Could not load content.js.");
+        const text = await response.text();
+        const start = text.indexOf("{");
+        const end = text.lastIndexOf("}");
+        if (start < 0 || end <= start) throw new Error("content.js looks malformed.");
+        return JSON.parse(text.slice(start, end + 1));
+      }
+
+      /* ---------------- Render: static fields ---------------- */
+
+      function renderHero() {
+        const hero = state.content.hero;
+        $("#heroTagline").value = hero.tagline || "";
+        $("#heroNote").value = hero.note || "";
+        $("#heroNoteAside").value = hero.noteAside || "";
+      }
+
+      function renderCompliments() {
+        $("#compliments").value = state.content.compliments.join("\n");
+      }
+
+      function renderLetter() {
+        const letter = state.content.letter;
+        $("#letterSalutation").value = letter.salutation || "";
+        $("#letterParagraphs").value = (letter.paragraphs || []).join("\n\n");
+        $("#letterSignature").value = letter.signature || "";
+        $("#letterPostscript").value = letter.postscript || "";
+      }
+
+      /* ---------------- Render: reasons ---------------- */
+
+      function renderReasons() {
+        const list = $("#reasonsList");
+        list.innerHTML = "";
+
+        state.content.reasons.forEach((reason, index) => {
+          const item = document.createElement("div");
+          item.className = "item";
+
+          const grid = document.createElement("div");
+          grid.className = "item-grid";
+
+          grid.append(
+            field(
+              "Emoji",
+              textInput(reason.emoji, (value) => { reason.emoji = value; }, {
+                maxlength: "16",
+                class: "emoji-input"
+              })
+            ),
+            field(
+              "Title",
+              textInput(reason.title, (value) => { reason.title = value; })
+            ),
+            field(
+              "Reason",
+              textBox(reason.text, (value) => { reason.text = value; }, 2)
+            )
+          );
+
+          item.append(
+            grid,
+            removeButton(() => {
+              state.content.reasons.splice(index, 1);
+              renderReasons();
+            })
+          );
+
+          list.appendChild(item);
+        });
+      }
+
+      /* ---------------- Render: quiz ---------------- */
+
+      function renderQuiz() {
+        const list = $("#quizList");
+        list.innerHTML = "";
+
+        state.content.quiz.forEach((question, index) => {
+          question.options = Array.isArray(question.options) && question.options.length
+            ? question.options
+            : ["", "", "", ""];
+          question.prize = question.prize || {
+            id: "prize-" + Date.now() + "-" + index,
+            emoji: "💗",
+            text: ""
+          };
+
+          const item = document.createElement("div");
+          item.className = "item quiz-item";
+
+          const head = document.createElement("div");
+          head.className = "item-head";
+
+          const label = document.createElement("strong");
+          label.textContent = `Question ${index + 1}`;
+
+          head.append(
+            label,
+            removeButton(() => {
+              state.content.quiz.splice(index, 1);
+              renderQuiz();
+            })
+          );
+
+          item.appendChild(head);
+          item.appendChild(
+            field(
+              "Question",
+              textInput(question.question, (value) => { question.question = value; })
+            )
+          );
+
+          const optionsGrid = document.createElement("div");
+          optionsGrid.className = "options-grid";
+
+          const answerSelect = document.createElement("select");
+
+          function refreshAnswerSelect() {
+            answerSelect.innerHTML = "";
+            question.options.forEach((option, optionIndex) => {
+              const choice = document.createElement("option");
+              choice.value = option;
+              choice.textContent = option || `Option ${optionIndex + 1}`;
+              answerSelect.appendChild(choice);
+            });
+
+            if (question.options.includes(question.answer)) {
+              answerSelect.value = question.answer;
+            } else {
+              question.answer = question.options[0] || "";
+              answerSelect.value = question.answer;
+            }
+          }
+
+          question.options.forEach((option, optionIndex) => {
+            optionsGrid.appendChild(
+              field(
+                `Option ${optionIndex + 1}`,
+                textInput(option, (value) => {
+                  question.options[optionIndex] = value;
+                  refreshAnswerSelect();
+                })
+              )
+            );
+          });
+
+          refreshAnswerSelect();
+          answerSelect.addEventListener("change", () => {
+            question.answer = answerSelect.value;
+          });
+
+          item.appendChild(optionsGrid);
+          item.appendChild(field("Correct answer", answerSelect));
+
+          const prizeGrid = document.createElement("div");
+          prizeGrid.className = "item-grid";
+          prizeGrid.append(
+            field(
+              "Prize emoji",
+              textInput(question.prize.emoji, (value) => { question.prize.emoji = value; }, {
+                maxlength: "16",
+                class: "emoji-input"
+              })
+            ),
+            field(
+              "Prize",
+              textInput(question.prize.text, (value) => { question.prize.text = value; })
+            )
+          );
+
+          item.appendChild(prizeGrid);
+          list.appendChild(item);
+        });
+      }
+
+      /* ---------------- Render: dates ---------------- */
+
+      function renderDates() {
+        const list = $("#datesList");
+        list.innerHTML = "";
+
+        state.content.dateIdeas.forEach((idea, index) => {
+          const item = document.createElement("div");
+          item.className = "item";
+
+          const grid = document.createElement("div");
+          grid.className = "item-grid dates-grid";
+
+          grid.append(
+            field(
+              "Emoji",
+              textInput(idea.emoji, (value) => { idea.emoji = value; }, {
+                maxlength: "16",
+                class: "emoji-input"
+              })
+            ),
+            field(
+              "Date idea",
+              textInput(idea.text, (value) => { idea.text = value; })
+            )
+          );
+
+          item.append(
+            grid,
+            removeButton(() => {
+              state.content.dateIdeas.splice(index, 1);
+              renderDates();
+            })
+          );
+
+          list.appendChild(item);
+        });
+      }
+
+      /* ---------------- Render: photos ---------------- */
+
+      function renderPhotos() {
+        const list = $("#photosList");
+        list.innerHTML = "";
+
+        for (let slot = 1; slot <= 6; slot++) {
+          const photo = state.content.photos[slot - 1] || { caption: "" };
+          state.content.photos[slot - 1] = photo;
+
+          const card = document.createElement("div");
+          card.className = "photo-item";
+
+          const preview = document.createElement("div");
+          preview.className = "photo-preview";
+
+          const image = document.createElement("img");
+          image.alt = `Photo ${slot}`;
+          image.src = `photos/us-${slot}.jpg?t=${Date.now()}`;
+          image.addEventListener("error", () => { image.style.display = "none"; });
+          image.addEventListener("load", () => { image.style.display = "block"; });
+
+          const badge = document.createElement("span");
+          badge.textContent = `us-${slot}.jpg`;
+
+          preview.append(image, badge);
+
+          const caption = textInput(photo.caption, (value) => { photo.caption = value; }, {
+            placeholder: "Caption"
+          });
+
+          const actions = document.createElement("div");
+          actions.className = "photo-actions";
+
+          const fileInput = document.createElement("input");
+          fileInput.type = "file";
+          fileInput.accept = "image/*";
+          fileInput.addEventListener("change", () => uploadPhoto(fileInput, slot));
+
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "btn ghost small";
+          remove.textContent = "Remove photo";
+          remove.addEventListener("click", () => removePhoto(slot));
+
+          actions.append(fileInput, remove);
+          card.append(preview, caption, actions);
+          list.appendChild(card);
+        }
+      }
+
+      /* ---------------- Photo handling ---------------- */
+
+      function shrinkImage(file, maxSize, quality) {
+        return new Promise((resolve, reject) => {
+          const url = URL.createObjectURL(file);
+          const image = new Image();
+
+          image.addEventListener("load", () => {
+            try {
+              const scale = Math.min(
+                1,
+                maxSize / Math.max(image.naturalWidth, image.naturalHeight)
+              );
+              const canvas = document.createElement("canvas");
+              canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+              canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+
+              const context = canvas.getContext("2d");
+              context.fillStyle = "#ffffff";
+              context.fillRect(0, 0, canvas.width, canvas.height);
+              context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+              URL.revokeObjectURL(url);
+              resolve(canvas.toDataURL("image/jpeg", quality));
+            } catch (error) {
+              URL.revokeObjectURL(url);
+              reject(error);
+            }
+          });
+
+          image.addEventListener("error", () => {
+            URL.revokeObjectURL(url);
+            reject(new Error("That file isn't a readable image."));
+          });
+
+          image.src = url;
+        });
+      }
+
+      async function uploadPhoto(fileInput, slot) {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+
+        if (!state.api) {
+          showToast("Photo uploads need the local server. Run start-site.bat.", true);
+          fileInput.value = "";
+          return;
+        }
+
+        try {
+          setStatus("Preparing photo…");
+          const dataUrl = await shrinkImage(file, 1600, 0.86);
+          setStatus("Uploading…");
+          await request("/api/photo", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-pin": state.pin
+            },
+            body: JSON.stringify({ slot, dataUrl })
+          });
+          showToast(`Photo ${slot} saved.`);
+          renderPhotos();
+        } catch (error) {
+          showToast(error.message, true);
+        } finally {
+          setStatus("");
+          fileInput.value = "";
+        }
+      }
+
+      async function removePhoto(slot) {
+        if (!state.api) {
+          showToast("Photo removal needs the local server.", true);
+          return;
+        }
+        if (!window.confirm(`Remove photo ${slot}?`)) return;
+
+        try {
+          await request("/api/photo", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-pin": state.pin
+            },
+            body: JSON.stringify({ slot, remove: true })
+          });
+          showToast(`Photo ${slot} removed.`);
+          renderPhotos();
+        } catch (error) {
+          showToast(error.message, true);
+        }
+      }
+
+      /* ---------------- Save ---------------- */
+
+      function downloadContent() {
+        const text =
+          "window.SITE_CONTENT = " + JSON.stringify(state.content, null, 2) + ";\n";
+        const blob = new Blob([text], { type: "text/javascript" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "content.js";
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showToast("content.js downloaded. Replace the old file to publish.");
+      }
+
+      async function saveContent() {
+        if (!state.api) {
+          downloadContent();
+          return;
+        }
+
+        try {
+          setStatus("Saving…");
+          $("#saveBtn").disabled = true;
+          await request("/api/content", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-pin": state.pin
+            },
+            body: JSON.stringify({ content: state.content })
+          });
+          setStatus("Saved just now");
+          showToast("Saved. Catie's site is updated.");
+        } catch (error) {
+          showToast(error.message, true);
+          setStatus("");
+        } finally {
+          $("#saveBtn").disabled = false;
+        }
+      }
+
+      /* ---------------- Boot ---------------- */
+
+      function renderAll() {
+        renderHero();
+        renderCompliments();
+        renderReasons();
+        renderPhotos();
+        renderQuiz();
+        renderDates();
+        renderLetter();
+      }
+
+      function showGate(message) {
+        $("#gate").hidden = false;
+        $("#app").hidden = true;
+        $("#logoutBtn").hidden = true;
+        if (message) $("#gateMsg").textContent = message;
+      }
+
+      async function unlock() {
+        try {
+          state.content = normalize(await loadContent());
+        } catch (error) {
+          state.content = normalize({});
+          showToast("Could not load content: " + error.message, true);
+        }
+
+        $("#gate").hidden = true;
+        $("#app").hidden = false;
+        $("#logoutBtn").hidden = !state.api;
+        renderAll();
+      }
+
+      async function boot() {
+        state.api = await checkApi();
+
+        if (state.api) {
+          $("#modeNote").innerHTML =
+            "<b>Live mode.</b> Connected to the local server — changes save straight to the site.";
+        } else {
+          $("#modeNote").innerHTML =
+            "<b>Static mode.</b> No local server detected. You can still edit and " +
+            "download <code>content.js</code>, then upload it to your host.";
+          $("#saveBtn").textContent = "Download content.js";
+        }
+
+        if (!state.api) {
+          await unlock();
+          return;
+        }
+
+        if (state.pin && (await verifyPin(state.pin))) {
+          await unlock();
+          return;
+        }
+
+        showGate();
+      }
+
+      /* ---------------- Events ---------------- */
+
+      $("#pinForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const pin = $("#pinInput").value.trim();
+        if (!pin) return;
+
+        $("#gateMsg").textContent = "";
+        const button = $("#pinForm button");
+        button.disabled = true;
+
+        const ok = await verifyPin(pin);
+        button.disabled = false;
+
+        if (!ok) {
+          $("#gateMsg").textContent = "Wrong PIN. Try again.";
+          $("#pinInput").select();
+          return;
+        }
+
+        state.pin = pin;
+        sessionStorage.setItem("cq-admin-pin", pin);
+        await unlock();
+      });
+
+      $("#logoutBtn").addEventListener("click", () => {
+        sessionStorage.removeItem("cq-admin-pin");
+        window.location.reload();
+      });
+
+      $("#tabs").addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-tab]");
+        if (!button) return;
+
+        $$("#tabs button").forEach((tab) => tab.classList.toggle("active", tab === button));
+        $$(".panel").forEach((panel) => {
+          panel.classList.toggle("active", panel.dataset.panel === button.dataset.tab);
+        });
+      });
+
+      $("#heroTagline").addEventListener("input", (event) => {
+        state.content.hero.tagline = event.target.value;
+      });
+      $("#heroNote").addEventListener("input", (event) => {
+        state.content.hero.note = event.target.value;
+      });
+      $("#heroNoteAside").addEventListener("input", (event) => {
+        state.content.hero.noteAside = event.target.value;
+      });
+
+      $("#compliments").addEventListener("input", (event) => {
+        state.content.compliments = event.target.value
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean);
+      });
+
+      $("#letterSalutation").addEventListener("input", (event) => {
+        state.content.letter.salutation = event.target.value;
+      });
+      $("#letterParagraphs").addEventListener("input", (event) => {
+        state.content.letter.paragraphs = event.target.value
+          .split(/\n\s*\n/)
+          .map((paragraph) => paragraph.trim())
+          .filter(Boolean);
+      });
+      $("#letterSignature").addEventListener("input", (event) => {
+        state.content.letter.signature = event.target.value;
+      });
+      $("#letterPostscript").addEventListener("input", (event) => {
+        state.content.letter.postscript = event.target.value;
+      });
+
+      $("#addReason").addEventListener("click", () => {
+        state.content.reasons.push({ emoji: "💗", title: "", text: "" });
+        renderReasons();
+      });
+
+      $("#addQuiz").addEventListener("click", () => {
+        state.content.quiz.push({
+          question: "",
+          options: ["", "", "", ""],
+          answer: "",
+          prize: {
+            id: "prize-" + Date.now(),
+            emoji: "💗",
+            text: ""
+          }
+        });
+        renderQuiz();
+      });
+
+      $("#addDate").addEventListener("click", () => {
+        state.content.dateIdeas.push({ emoji: "💗", text: "" });
+        renderDates();
+      });
+
+      $("#saveBtn").addEventListener("click", saveContent);
+      $("#downloadBtn").addEventListener("click", downloadContent);
+
+      boot();
+    })();
+  </script>
+</body>
+</html>
