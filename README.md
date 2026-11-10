@@ -4,7 +4,7 @@ A flirty little website made for **Catie Quintana** — part love letter, part g
 
 It includes a photo gallery, a compliment machine, a 12-question quiz with real prize coupons, a memory game, a date-idea spinner, a prize pouch, a like-o-meter, a runaway "No" button, a sealed letter, and a few hidden easter eggs. Emojis render in Apple style on every device.
 
-It also has a music player that autoplays (with an uploaded song if you add one), rotating notes and letters that change after she reads them, a live Jitsi call with an invite link, voice recording, a shared media wall with photo/video/audio uploads and location sharing, and four play-together games: Truth & Dare, Lovers Audition, Dance Challenge, and Couples Trivia. The two photos you supplied are used as subtle page watermarks and the letter seal.
+It also has a music player that autoplays your uploaded songs, rotating notes and letters that change after she reads them, a live Jitsi call with an invite link, voice recording, a shared media wall with photo/video/audio uploads and location sharing, and four play-together games: Truth & Dare, Lovers Audition, Dance Challenge, and Couples Trivia. The two photos you supplied are used as subtle page watermarks and the letter seal.
 
 ---
 
@@ -35,9 +35,9 @@ Click **Save changes** and refresh the site. The server writes `content.js` and 
 
 ### Music
 
-The player autoplays a soft generated track, so it works even with no audio files.
+The player plays **only the songs you add**. There is no built-in music anymore. If no songs are added, the player stays hidden.
 
-To use your own song:
+To add a song:
 
 1. Open the admin **Extras** tab.
 2. Under **Music**, click **Upload a song**.

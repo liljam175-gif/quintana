@@ -274,17 +274,13 @@
   });
 
   /* ======================================================================
-     3. MUSIC PLAYER — autoplay attempt, play/pause, next/prev, generated
-        fallback tracks so it works with no audio files at all.
+     3. MUSIC PLAYER — plays only the songs you added in the admin (music/).
+        If no song has been added yet, the player stays hidden.
      ====================================================================== */
 
-  const defaultTracks = [
-    { title: "Slow Dance in the Kitchen", artist: "made for Catie", mood: "warm" },
-    { title: "Text Me When You Get Home", artist: "made for Catie", mood: "dreamy" },
-    { title: "I'm a Little Obsessed", artist: "made for Catie", mood: "playful" }
-  ];
-
-  const tracks = asArray(SITE.music && SITE.music.tracks, defaultTracks);
+  const tracks = Array.isArray(SITE.music && SITE.music.tracks)
+    ? SITE.music.tracks.filter((track) => track && track.src)
+    : [];
   const musicPlayer = $("#musicPlayer");
   const mpTitle = $("#mpTitle");
   const mpStatus = $("#mpStatus");
@@ -305,161 +301,15 @@
   let musicIndex = openingIndex >= 0
     ? openingIndex
     : Number(store.get("cq-music-index-v2", 0)) || 0;
-  musicIndex = ((musicIndex % tracks.length) + tracks.length) % tracks.length;
-  const musicCache = new Map();
+  if (tracks.length) {
+    musicIndex = ((musicIndex % tracks.length) + tracks.length) % tracks.length;
+  }
   let musicGestureArmed = false;
   let musicAudio = null;
 
-  function mulberry32(seed) {
-    let a = seed >>> 0;
-    return function next() {
-      a = (a + 0x6d2b79f5) >>> 0;
-      let t = Math.imul(a ^ (a >>> 15), 1 | a);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-
-  function encodeWav(samples, sampleRate) {
-    const buffer = new ArrayBuffer(44 + samples.length * 2);
-    const view = new DataView(buffer);
-    const writeString = (offset, text) => {
-      for (let i = 0; i < text.length; i += 1) view.setUint8(offset + i, text.charCodeAt(i));
-    };
-    writeString(0, "RIFF");
-    view.setUint32(4, 36 + samples.length * 2, true);
-    writeString(8, "WAVE");
-    writeString(12, "fmt ");
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, 1, true);
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, sampleRate * 2, true);
-    view.setUint16(32, 2, true);
-    view.setUint16(34, 16, true);
-    writeString(36, "data");
-    view.setUint32(40, samples.length * 2, true);
-    let offset = 44;
-    for (let i = 0; i < samples.length; i += 1) {
-      const sample = Math.max(-1, Math.min(1, samples[i]));
-      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
-      offset += 2;
-    }
-    return new Blob([view], { type: "audio/wav" });
-  }
-
-  function makeTrackBlob(seed, mood) {
-    const sampleRate = 22050;
-    const seconds = 20;
-    const total = sampleRate * seconds;
-    const data = new Float32Array(total);
-    const rand = mulberry32(seed * 2654435761 + 12345);
-
-    const progressions = {
-      warm: [
-        [261.63, 329.63, 392.0, 493.88],
-        [220.0, 261.63, 329.63, 392.0],
-        [174.61, 220.0, 261.63, 329.63],
-        [196.0, 246.94, 293.66, 349.23]
-      ],
-      dreamy: [
-        [293.66, 349.23, 440.0, 523.25],
-        [246.94, 293.66, 369.99, 440.0],
-        [220.0, 261.63, 329.63, 392.0],
-        [196.0, 246.94, 293.66, 392.0]
-      ],
-      playful: [
-        [261.63, 329.63, 392.0, 523.25],
-        [349.23, 440.0, 523.25, 659.25],
-        [293.66, 369.99, 440.0, 587.33],
-        [392.0, 493.88, 587.33, 783.99]
-      ]
-    };
-
-    const progression = progressions[mood] || progressions.warm;
-    const chordDuration = seconds / 4;
-
-    const add = (index, value) => {
-      if (index >= 0 && index < total) data[index] += value;
-    };
-
-    for (let chordIndex = 0; chordIndex < 4; chordIndex += 1) {
-      const chord = progression[chordIndex];
-      const chordStart = chordIndex * chordDuration;
-      const chordStartIndex = Math.floor(chordStart * sampleRate);
-      const chordLength = Math.floor(chordDuration * sampleRate);
-
-      // Soft pad.
-      chord.forEach((frequency, voice) => {
-        const detune = 1 + (rand() - 0.5) * 0.003;
-        for (let i = 0; i < chordLength; i += 1) {
-          const t = i / sampleRate;
-          const envelope = Math.min(1, t / 1.4) * Math.min(1, (chordDuration - t) / 1.4);
-          const value =
-            (Math.sin(2 * Math.PI * frequency * detune * t + voice * 0.7) +
-              0.45 * Math.sin(2 * Math.PI * frequency * 2 * t)) *
-            0.032 *
-            envelope;
-          add(chordStartIndex + i, value);
-        }
-      });
-
-      // Gentle arpeggio.
-      const notes = [...chord, chord[0] * 2, chord[2], chord[1]];
-      const stepDuration = 0.4;
-      const steps = Math.floor(chordDuration / stepDuration);
-      for (let step = 0; step < steps; step += 1) {
-        const frequency = notes[step % notes.length] * (step % 8 < 4 ? 1 : 2);
-        const startIndex = Math.floor((chordStart + step * stepDuration) * sampleRate);
-        const length = Math.floor(0.55 * sampleRate);
-        for (let i = 0; i < length; i += 1) {
-          const t = i / sampleRate;
-          const envelope = Math.exp(-t * 7) * 0.055;
-          add(
-            startIndex + i,
-            Math.sin(2 * Math.PI * frequency * t) * envelope +
-              0.25 * Math.sin(2 * Math.PI * frequency * 2 * t) * envelope
-          );
-        }
-      }
-
-      // Warm bass.
-      for (let beat = 0; beat < 4; beat += 1) {
-        const frequency = chord[0] / 2;
-        const startIndex = Math.floor(
-          (chordStart + beat * (chordDuration / 4)) * sampleRate
-        );
-        const length = Math.floor((chordDuration / 4) * sampleRate);
-        for (let i = 0; i < length; i += 1) {
-          const t = i / sampleRate;
-          const envelope = Math.min(1, t / 0.08) * Math.exp(-t * 1.2) * 0.09;
-          add(startIndex + i, Math.sin(2 * Math.PI * frequency * t) * envelope);
-        }
-      }
-    }
-
-    let peak = 0;
-    for (let i = 0; i < total; i += 1) peak = Math.max(peak, Math.abs(data[i]));
-    const gain = peak > 0 ? 0.8 / peak : 1;
-    const fadeLength = Math.floor(sampleRate * 0.8);
-    for (let i = 0; i < total; i += 1) {
-      let value = data[i] * gain;
-      if (i < fadeLength) value *= i / fadeLength;
-      if (i > total - fadeLength) value *= (total - i) / fadeLength;
-      data[i] = value;
-    }
-
-    return encodeWav(data, sampleRate);
-  }
-
   function getTrackUrl(index) {
     const track = tracks[index] || tracks[0];
-    if (track && track.src) return track.src;
-    if (musicCache.has(index)) return musicCache.get(index);
-    const blob = makeTrackBlob(index + 1, track && track.mood);
-    const url = URL.createObjectURL(blob);
-    musicCache.set(index, url);
-    return url;
+    return track && track.src ? track.src : "";
   }
 
   function updateMusicUI(mode) {
@@ -512,6 +362,7 @@
     updateMusicUI("loading");
     try {
       const url = getTrackUrl(musicIndex);
+      if (!url) return;
       if (musicAudio.src !== url) musicAudio.src = url;
       musicAudio.currentTime = 0;
       if (shouldPlay) playMusic();
@@ -523,6 +374,7 @@
   }
 
   if (musicPlayer && tracks.length) {
+    musicPlayer.hidden = false;
     musicAudio = new Audio();
     musicAudio.preload = "auto";
     musicAudio.volume = 0.5;
@@ -560,6 +412,8 @@
       loadMusic(musicIndex, autoplay);
       if (!autoplay) updateMusicUI("ready");
     }, 350);
+  } else if (musicPlayer) {
+    musicPlayer.hidden = true;
   }
 
   /* ======================================================================

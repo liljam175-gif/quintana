@@ -743,8 +743,7 @@
 
         <h3 class="subhead">Music</h3>
         <p class="hint">
-          Leave <code>src</code> empty to use the built-in generated track. Add an MP3 URL or path to
-          use your own song.
+          Only the songs you upload play on the site. Use <strong>Upload a song</strong> below.
         </p>
         <label class="check-field">
           <input id="musicAutoplay" type="checkbox" />
@@ -760,9 +759,6 @@
           </span>
         </div>
         <div id="musicTracks"></div>
-        <div class="add-row">
-          <button class="btn ghost small" id="addTrack" type="button">+ Add track</button>
-        </div>
 
         <h3 class="subhead">Live call</h3>
         <p class="hint">Leave the room blank and a private room is generated for you.</p>
@@ -1110,11 +1106,11 @@
               textInput(track.artist, (value) => { track.artist = value; })
             ),
             field(
-              "Audio URL (optional)",
+              "Audio file or URL",
               textInput(track.src || "", (value) => { track.src = value; }, {
-                placeholder: "https://example.com/song.mp3"
+                placeholder: "music/your-song.mp3"
               }),
-              "Leave empty to use the built-in generated music."
+              "Tracks without a file or URL are skipped."
             )
           );
 
@@ -1854,11 +1850,6 @@
           postscript: ""
         });
         renderLetters();
-      });
-
-      $("#addTrack").addEventListener("click", () => {
-        state.content.music.tracks.push({ title: "", artist: "", src: "", mood: "warm" });
-        renderTracks();
       });
 
       $("#musicUpload").addEventListener("change", () => {

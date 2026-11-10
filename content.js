@@ -357,21 +357,36 @@ window.SITE_CONTENT = {
   ],
   "music": {
     "autoplay": true,
-    "opening": "",
+    "opening": "music/mad-over.mp3",
     "tracks": [
       {
-        "title": "Slow Dance in the Kitchen",
-        "artist": "made for Catie",
+        "title": "mad over",
+        "artist": "from you",
+        "src": "music/mad-over.mp3",
         "mood": "warm"
       },
       {
-        "title": "Text Me When You Get Home",
-        "artist": "made for Catie",
+        "title": "Know Better",
+        "artist": "An-known, Dicey",
+        "src": "music/An-known_Dicey_-_Know_Better__Official_Music_Video_(48k).mp3",
+        "mood": "playful"
+      },
+      {
+        "title": "Mirrors",
+        "artist": "Justin Timberlake",
+        "src": "music/Justin_Timberlake_-_Mirrors__Official_Video_(48k).mp3",
         "mood": "dreamy"
       },
       {
-        "title": "I'm a Little Obsessed",
-        "artist": "made for Catie",
+        "title": "Better",
+        "artist": "Khalid",
+        "src": "music/Khalid_-_Better__Official_Video_(0).mp3",
+        "mood": "warm"
+      },
+      {
+        "title": "Sunflower",
+        "artist": "Post Malone, Swae Lee",
+        "src": "music/Post_Malone,_Swae_Lee_-_Sunflower__Spider-Man__Into_the_Spider-Verse_(48k).mp3",
         "mood": "playful"
       }
     ]
@@ -437,61 +452,111 @@ window.SITE_CONTENT = {
   "couplesTrivia": [
     {
       "question": "What's my go-to order when I'm not sure what to get?",
-      "options": ["Something spicy", "The usual", "Whatever you're having", "Just fries"],
+      "options": [
+        "Something spicy",
+        "The usual",
+        "Whatever you're having",
+        "Just fries"
+      ],
       "answer": "Whatever you're having",
       "note": "It's not indecision. It's a preference for your company."
     },
     {
       "question": "What's the first thing I notice when you walk in?",
-      "options": ["Your outfit", "Your smile", "The energy shift", "My heart rate"],
+      "options": [
+        "Your outfit",
+        "Your smile",
+        "The energy shift",
+        "My heart rate"
+      ],
       "answer": "My heart rate",
       "note": "Then your smile. Then I forget what I was saying."
     },
     {
       "question": "What do I want to do on a rainy day?",
-      "options": ["Go out anyway", "Movie marathon", "Nothing with you", "Clean the house"],
+      "options": [
+        "Go out anyway",
+        "Movie marathon",
+        "Nothing with you",
+        "Clean the house"
+      ],
       "answer": "Nothing with you",
       "note": "Doing nothing with you is my favorite kind of something."
     },
     {
       "question": "What's my favorite way to be told you miss me?",
-      "options": ["A long paragraph", "A voice note", "A single 'come here'", "A meme"],
+      "options": [
+        "A long paragraph",
+        "A voice note",
+        "A single 'come here'",
+        "A meme"
+      ],
       "answer": "A single 'come here'",
       "note": "Short, bossy, devastating. Works every time."
     },
     {
       "question": "What's the best part of a date with me?",
-      "options": ["The food", "The plan", "The way you look at me", "The ride home"],
+      "options": [
+        "The food",
+        "The plan",
+        "The way you look at me",
+        "The ride home"
+      ],
       "answer": "The way you look at me",
       "note": "I'd sit through anything for that look."
     },
     {
       "question": "What's my love language?",
-      "options": ["Gifts", "Words", "Time", "Touch"],
+      "options": [
+        "Gifts",
+        "Words",
+        "Time",
+        "Touch"
+      ],
       "answer": "Time",
       "note": "Specifically: your time, undivided, no phone."
     },
     {
       "question": "What do I do when I'm thinking about you?",
-      "options": ["Text you", "Smile at my phone", "Both", "Pretend I'm not"],
+      "options": [
+        "Text you",
+        "Smile at my phone",
+        "Both",
+        "Pretend I'm not"
+      ],
       "answer": "Both",
       "note": "I'm not subtle. I've accepted it."
     },
     {
       "question": "What's the quickest way to make me melt?",
-      "options": ["Call me by a nickname", "Play with my hair", "Say my name softly", "All of the above"],
+      "options": [
+        "Call me by a nickname",
+        "Play with my hair",
+        "Say my name softly",
+        "All of the above"
+      ],
       "answer": "All of the above",
       "note": "I'm easy. For you, especially."
     },
     {
       "question": "What's our ideal night in?",
-      "options": ["Something fancy", "Takeout and a movie", "Music and talking", "All of it, slowly"],
+      "options": [
+        "Something fancy",
+        "Takeout and a movie",
+        "Music and talking",
+        "All of it, slowly"
+      ],
       "answer": "All of it, slowly",
       "note": "No rush. That's the whole point."
     },
     {
       "question": "What's the one thing I'd never get tired of?",
-      "options": ["Your voice", "Your laugh", "Your kiss", "You"],
+      "options": [
+        "Your voice",
+        "Your laugh",
+        "Your kiss",
+        "You"
+      ],
       "answer": "You",
       "note": "The other three are strong contenders, though."
     }
