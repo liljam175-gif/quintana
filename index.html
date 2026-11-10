@@ -2069,6 +2069,234 @@
       .topbar-links a { font-size: 0.66rem; letter-spacing: 0.1em; }
     }
 
+    /* ---------- PRIVATE CHAT ---------- */
+
+    .chat-wrap { max-width: 780px; }
+
+    .chat-card {
+      padding: clamp(1.2rem, 4vw, 2rem);
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+    }
+
+    .chat-login h3 { margin: 0 0 0.35rem; font-size: 1.4rem; }
+
+    .chat-login > p {
+      margin: 0 0 1rem;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .chat-login-form {
+      display: grid;
+      gap: 0.6rem;
+      max-width: 420px;
+    }
+
+    .chat-login-form input,
+    .chat-composer textarea {
+      width: 100%;
+      padding: 0.8rem 0.95rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.96rem;
+    }
+
+    .chat-login-form input:focus,
+    .chat-composer textarea:focus {
+      outline: 2px solid #ffb8cf;
+      outline-offset: 1px;
+    }
+
+    .chat-hint {
+      margin: 1rem 0 0;
+      font-size: 0.76rem;
+      color: var(--ink-soft);
+    }
+
+    .chat-hint code {
+      padding: 0.08rem 0.3rem;
+      border-radius: 5px;
+      background: #ffeef3;
+      color: var(--rose-deep);
+      font-size: 0.92em;
+    }
+
+    .chat-msg {
+      min-height: 1.2em;
+      margin: 0.8rem 0 0;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--rose-deep);
+    }
+
+    .chat-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .chat-who {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      min-width: 0;
+    }
+
+    .chat-who strong {
+      font-size: 0.9rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chat-who span {
+      font-size: 0.64rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .chat-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      justify-content: flex-end;
+    }
+
+    .chat-log {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 1rem 0.2rem;
+      scrollbar-width: thin;
+    }
+
+    .chat-message {
+      display: flex;
+      flex-direction: column;
+      max-width: 84%;
+    }
+
+    .chat-message.own {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .chat-message.theirs { align-self: flex-start; }
+
+    .chat-meta {
+      display: flex;
+      gap: 0.45rem;
+      margin: 0 0.35rem 0.2rem;
+      font-size: 0.66rem;
+      color: var(--ink-soft);
+    }
+
+    .chat-bubble {
+      margin: 0;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    .chat-message.own .chat-bubble {
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+      color: #fff;
+    }
+
+    .chat-empty {
+      margin: 0.2rem 0 0.6rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+    }
+
+    .chat-composer {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.6rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .chat-composer textarea {
+      flex: 1;
+      min-height: 54px;
+      max-height: 150px;
+      resize: vertical;
+    }
+
+    .nudge-banner {
+      position: fixed;
+      left: 50%;
+      bottom: 5.6rem;
+      z-index: 120;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      width: min(580px, calc(100% - 1.4rem));
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 20px 50px rgba(110, 45, 75, 0.22);
+      transform: translateX(-50%);
+    }
+
+    .nudge-banner[hidden] { display: none; }
+
+    .nudge-emoji { font-size: 1.6rem; line-height: 1; }
+
+    .nudge-copy {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 0;
+    }
+
+    .nudge-copy strong { font-size: 0.86rem; }
+
+    .nudge-copy span {
+      font-size: 0.76rem;
+      color: var(--ink-soft);
+    }
+
+    .nudge-close {
+      flex: 0 0 auto;
+      padding: 0.2rem;
+      border: none;
+      background: none;
+      color: var(--ink-soft);
+      font: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 620px) {
+      .chat-head { align-items: flex-start; flex-direction: column; }
+      .chat-actions { justify-content: flex-start; }
+      .chat-composer { flex-direction: column; align-items: stretch; }
+      .nudge-banner { bottom: 6.2rem; align-items: flex-start; flex-wrap: wrap; }
+      .nudge-copy { flex-basis: calc(100% - 3.5rem); }
+    }
+
     /* ---------- REDUCED MOTION ---------- */
 
     @media (prefers-reduced-motion: reduce) {
@@ -2096,6 +2324,7 @@
       <a href="#memory">Games</a>
       <a href="#together">Together</a>
       <a href="#live">Live</a>
+      <a href="#chat">Chat</a>
       <a href="#wall">Wall</a>
       <a href="#notes">Notes</a>
       <a href="#letter">Letter</a>
@@ -2306,7 +2535,7 @@
           </div>
         </div>
         <p class="live-invite" style="text-align:center">
-          <button class="btn ghost small" data-live-invite type="button">Play this live with me 💞</button>
+          <button class="btn ghost small" data-live-invite type="button">Nudge me to play 💞</button>
         </p>
       </div>
     </section>
@@ -2332,7 +2561,7 @@
           </p>
         </div>
         <p class="live-invite" style="text-align:center">
-          <button class="btn ghost small" data-live-invite type="button">Play this live with me 💞</button>
+          <button class="btn ghost small" data-live-invite type="button">Nudge me to play 💞</button>
         </p>
       </div>
     </section>
@@ -2358,7 +2587,7 @@
             <div class="play-actions">
               <button class="btn small" id="truthBtn" type="button">Truth 💬</button>
               <button class="btn ghost small" id="dareBtn" type="button">Dare 🔥</button>
-              <button class="btn ghost small" data-live-invite type="button">Invite to play live</button>
+              <button class="btn ghost small" data-live-invite type="button">Nudge me to play</button>
             </div>
             <div class="play-meta">
               <span id="tdCount">0 rounds played</span>
@@ -2373,7 +2602,7 @@
             <p class="play-prompt" id="auditionPrompt">Press the button. Make me believe it.</p>
             <div class="play-actions">
               <button class="btn small" id="auditionBtn" type="button">Next audition</button>
-              <button class="btn ghost small" data-live-invite type="button">Invite to play live</button>
+              <button class="btn ghost small" data-live-invite type="button">Nudge me to play</button>
             </div>
             <div class="play-meta">
               <span id="auditionRounds">Rounds: 0</span>
@@ -2389,7 +2618,7 @@
             <div class="play-actions">
               <button class="btn small" id="danceBtn" type="button">Spin a move</button>
               <button class="btn ghost small" id="danceTimerBtn" type="button">Start 20s timer</button>
-              <button class="btn ghost small" data-live-invite type="button">Invite to play live</button>
+              <button class="btn ghost small" data-live-invite type="button">Nudge me to play</button>
             </div>
             <div class="play-meta">
               <span id="danceTimer" class="dance-timer">20.0s</span>
@@ -2406,7 +2635,7 @@
             <p class="trivia-feedback" id="triviaFeedback" aria-live="polite"></p>
             <div class="play-actions">
               <button class="btn small" id="triviaBtn" type="button">Start trivia</button>
-              <button class="btn ghost small" data-live-invite type="button">Invite to play live</button>
+              <button class="btn ghost small" data-live-invite type="button">Nudge me to play</button>
             </div>
             <div class="play-meta">
               <span id="triviaScore">Score: 0 / 0</span>
@@ -2587,15 +2816,15 @@
           <p class="kicker">Live, just us</p>
           <h2>Talk to me. For real.</h2>
           <p class="lede">
-            Open a private room, send the invite, and play every game together. Camera optional,
-            butterflies mandatory.
+            Open a private room and press the button. I get a little nudge that says come here.
+            No links to copy. Camera optional, butterflies mandatory.
           </p>
         </div>
 
         <div class="live-grid">
           <div class="game-card reveal live-card">
             <h3>Our private call</h3>
-            <p>Tap start, then send the invite link. No account needed.</p>
+            <p>Tap start, then press Notify me. I'll get a nudge right away.</p>
             <div class="call-stage" id="callStage">
               <div class="call-empty" id="callEmpty">
                 <span class="call-icon">📞</span>
@@ -2604,11 +2833,11 @@
             </div>
             <div class="call-actions">
               <button class="btn" id="startCall" type="button">Start live call</button>
-              <button class="btn ghost" id="copyInvite" type="button">Copy invite link</button>
+              <button class="btn ghost" id="notifyCall" type="button">Notify me to join 🔔</button>
               <button class="btn ghost" id="openCall" type="button" hidden>Open in new tab</button>
             </div>
             <p class="call-note" id="callNote">
-              Powered by Jitsi Meet. The room is private to anyone with the link.
+              Powered by Jitsi Meet. Pressing Notify me sends a private nudge to the other person.
             </p>
           </div>
 
@@ -2624,6 +2853,77 @@
             <p class="rec-status" id="recStatus">Mic off. For now.</p>
             <div class="rec-list" id="recList"></div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PRIVATE CHAT ================= -->
+    <section class="section" id="chat">
+      <div class="wrap chat-wrap">
+        <div class="section-head center reveal">
+          <p class="kicker">Just us · private</p>
+          <h2>Our little chat</h2>
+          <p class="lede">
+            Only our two emails get in. Messages land here live, no refreshing, no screenshots
+            for anyone else.
+          </p>
+        </div>
+
+        <div class="chat-card reveal" id="chatCard">
+          <div class="chat-login" id="chatLogin">
+            <h3>Sign in to talk to me</h3>
+            <p>Use one of the two private emails.</p>
+            <form class="chat-login-form" id="chatLoginForm" autocomplete="on">
+              <input
+                id="chatEmail"
+                type="email"
+                placeholder="Email"
+                autocomplete="username"
+                required
+              />
+              <input
+                id="chatPassword"
+                type="password"
+                placeholder="Password"
+                autocomplete="current-password"
+                required
+              />
+              <button class="btn" type="submit">Sign in</button>
+            </form>
+            <p class="chat-hint" id="chatHint">
+              Sign in once on this device. The chat stays live while the page is open.
+            </p>
+          </div>
+
+          <div class="chat-app" id="chatApp" hidden>
+            <div class="chat-head">
+              <div class="chat-who">
+                <strong id="chatWho">Signed in</strong>
+                <span id="chatState">live</span>
+              </div>
+              <div class="chat-actions">
+                <button class="btn ghost small" id="chatNudge" type="button">
+                  Send a nudge 🔔
+                </button>
+                <button class="btn ghost small" id="chatSignOut" type="button">Sign out</button>
+              </div>
+            </div>
+
+            <div class="chat-log" id="chatLog" aria-live="polite"></div>
+            <p class="chat-empty" id="chatEmpty">No messages yet. Say something flirty.</p>
+
+            <form class="chat-composer" id="chatForm">
+              <textarea
+                id="chatInput"
+                rows="2"
+                maxlength="2000"
+                placeholder="Type something only I get to read…"
+              ></textarea>
+              <button class="btn" id="chatSend" type="submit">Send 💌</button>
+            </form>
+          </div>
+
+          <p class="chat-msg" id="chatLoginMsg" aria-live="polite"></p>
         </div>
       </div>
     </section>
@@ -2688,21 +2988,41 @@
       P.S. It's 2 a.m., isn't it? Go to sleep. Dream about me.
     </p>
     <p class="footer-links">
+      <a href="#chat">Private chat</a>
+      <span aria-hidden="true">·</span>
       <a href="admin.html">Admin</a>
       <span aria-hidden="true">·</span>
       <a href="#top">Back to top</a>
     </p>
   </footer>
 
+  <script src="supabase-config.js"></script>
+  <script src="cloud.js"></script>
   <script src="content.js"></script>
   <script>
-    (() => {
+    (async () => {
       "use strict";
 
       /* ---------- Content (editable via admin.html) ---------- */
       const SITE = (window.SITE_CONTENT && typeof window.SITE_CONTENT === "object")
         ? window.SITE_CONTENT
         : {};
+
+      window.SITE_CONTENT = SITE;
+
+      /* If Supabase is set up, the cloud copy wins over content.js. */
+      if (window.CQCloud && window.CQCloud.configured) {
+        try {
+          const remote = await window.CQCloud.loadContent();
+          if (remote && typeof remote === "object") {
+            Object.keys(SITE).forEach((key) => delete SITE[key]);
+            Object.assign(SITE, remote);
+            window.SITE_CONTENT = SITE;
+          }
+        } catch (error) {
+          console.warn("[CQ] Using local content.js:", error);
+        }
+      }
 
       const heroTagline = document.getElementById("heroTagline");
       const heroNoteText = document.getElementById("heroNoteText");
@@ -3020,9 +3340,11 @@
       /* ---------- Photos ---------- */
       document.querySelectorAll(".polaroid").forEach((figure) => {
         const img = figure.querySelector("img");
+        const index = Number(figure.dataset.photo) - 1;
+        const saved = Array.isArray(SITE.photos) && SITE.photos[index] && SITE.photos[index].src;
         img.addEventListener("load", () => figure.classList.add("has-photo"));
         img.addEventListener("error", () => img.remove());
-        img.src = `photos/us-${figure.dataset.photo}.jpg`;
+        img.src = saved || `photos/us-${figure.dataset.photo}.jpg`;
       });
 
       function shuffleArray(list) {
@@ -3663,8 +3985,23 @@
       } else {
         revealItems.forEach((item) => item.classList.add("in"));
       }
+
+      /* ---------- Load extras only after cloud content is ready ---------- */
+      function loadScript(src) {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = src;
+          script.addEventListener("load", resolve, { once: true });
+          script.addEventListener("error", () => reject(new Error(`Could not load ${src}`)), {
+            once: true
+          });
+          document.body.appendChild(script);
+        });
+      }
+
+      await loadScript("features.js");
+      await loadScript("chat.js");
     })();
   </script>
-  <script src="features.js"></script>
 </body>
 </html>

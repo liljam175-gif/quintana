@@ -656,7 +656,7 @@
   });
 
   /* ======================================================================
-     5. LIVE CALL — Jitsi room with an invite link
+     5. LIVE CALL — private Jitsi room plus a Supabase nudge
      ====================================================================== */
 
   const ROOM_KEY = "cq-call-room-v2";
@@ -674,11 +674,19 @@
     return `catie-and-me-${name}`;
   }
 
+  function cleanRoom(value) {
+    return String(value || "")
+      .replace(/[^a-zA-Z0-9_-]/g, "")
+      .slice(0, 64);
+  }
+
   function getRoomName() {
     const params = new URLSearchParams(window.location.search);
     const fromUrl = params.get("call");
-    let room = fromUrl || store.get(ROOM_KEY, "") || (SITE.live && SITE.live.room) || "";
-    room = String(room).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 64);
+    let room =
+      cleanRoom(fromUrl) ||
+      cleanRoom(store.get(ROOM_KEY, "")) ||
+      cleanRoom(SITE.live && SITE.live.room);
     if (!room) room = makeRoomName();
     store.set(ROOM_KEY, room);
     return room;
@@ -688,9 +696,11 @@
     return `${callService}${encodeURIComponent(room)}`;
   }
 
-  function startCall() {
-    const room = getRoomName();
-    if (!callStage) return;
+  function startCall(roomOverride) {
+    const room = cleanRoom(roomOverride) || getRoomName();
+    store.set(ROOM_KEY, room);
+    if (!callStage) return room;
+
     callStage.innerHTML = "";
     const iframe = document.createElement("iframe");
     iframe.src = `${roomUrl(room)}#config.prejoinPageEnabled=false&config.startWithAudioMuted=false`;
@@ -700,46 +710,68 @@
     callStage.appendChild(iframe);
     if (openCallBtn) openCallBtn.hidden = false;
     if (callNote) {
-      callNote.textContent = `Room: ${room} · share the invite link so we land in the same room.`;
+      callNote.textContent = `Room: ${room} · press Notify me to send a private nudge.`;
     }
     return room;
   }
 
-  function inviteUrl() {
-    const room = getRoomName();
-    const url = new URL(window.location.href);
-    url.searchParams.set("call", room);
-    url.hash = "live";
-    return url.toString();
-  }
+  async function sendNudge(kind) {
+    const cloud = window.CQCloud;
 
-  async function copyInvite() {
-    const link = inviteUrl();
-    try {
-      await navigator.clipboard.writeText(link);
-      toast("Invite copied. Send it to me.");
-    } catch (error) {
-      window.prompt("Copy this invite link:", link);
+    if (!cloud || !cloud.configured) {
+      toast("Nudges need Supabase. Open SUPABASE-SETUP.md to connect it.");
+      return false;
     }
-    return link;
+
+    if (!cloud.currentUser()) {
+      toast("Sign in to the private chat first, then nudge me 💌");
+      document.getElementById("chat")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return false;
+    }
+
+    try {
+      const room = getRoomName();
+      await cloud.sendNotification({
+        type: kind || "call",
+        room,
+        text:
+          kind === "play"
+            ? "wants to play a game with you."
+            : "wants you on the live call."
+      });
+      toast("Nudge sent 💌");
+      return true;
+    } catch (error) {
+      toast(cloud.friendlyError(error));
+      return false;
+    }
   }
 
   $("#startCall")?.addEventListener("click", () => {
     startCall();
-    toast("Room open. Send the invite link.");
+    toast("Room open. Press Notify me to send a nudge.");
   });
 
-  $("#copyInvite")?.addEventListener("click", copyInvite);
+  $("#notifyCall")?.addEventListener("click", () => {
+    sendNudge("call");
+  });
 
   openCallBtn?.addEventListener("click", () => {
     window.open(roomUrl(getRoomName()), "_blank", "noopener");
   });
 
-  // Opening an invite link starts the same room automatically.
+  // A nudge banner or an old ?call= link can start the same room.
+  window.addEventListener("cq:join-call", (event) => {
+    const room = event.detail && event.detail.room;
+    startCall(room);
+    toast("Joining the call 💞");
+    $("#live")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
   if (new URLSearchParams(window.location.search).get("call")) {
     window.setTimeout(() => {
       startCall();
-      toast("Invite opened. The call is below.");
+      toast("Call opened. The room is below.");
       $("#live")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 650);
   }
@@ -1305,14 +1337,15 @@
   }
 
   /* ======================================================================
-     8. INVITE-TO-PLAY BUTTONS — open the call and copy the link
+     8. “NUDGE ME TO PLAY” BUTTONS — send a private notification
      ====================================================================== */
 
   $$("[data-live-invite]").forEach((button) => {
     button.addEventListener("click", async () => {
-      startCall();
-      await copyInvite();
-      $("#live")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const sent = await sendNudge("call");
+      if (sent) {
+        $("#live")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     });
   });
 })();

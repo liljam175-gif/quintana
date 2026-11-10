@@ -131,6 +131,10 @@
 
     .gate form { display: flex; gap: 0.6rem; }
 
+    #loginForm { flex-direction: column; }
+
+    #loginForm input { width: 100%; }
+
     .gate input {
       flex: 1;
       min-width: 0;
@@ -587,12 +591,31 @@
   <main class="admin-wrap">
     <p class="mode-note" id="modeNote">Checking connection…</p>
 
-    <!-- ================= PIN GATE ================= -->
+    <!-- ================= PRIVATE LOGIN ================= -->
     <section class="gate" id="gate" hidden>
       <div class="lock" aria-hidden="true">💌</div>
       <h1>Admin dashboard</h1>
-      <p>Enter your PIN to edit Catie's site. It's saved in <code>admin-key.txt</code>.</p>
-      <form id="pinForm" autocomplete="off">
+      <p id="gateIntro">
+        Sign in with one of the two private emails. Only those accounts can edit the site.
+      </p>
+      <form id="loginForm" autocomplete="on">
+        <input
+          id="loginEmail"
+          type="email"
+          placeholder="Email"
+          autocomplete="username"
+          aria-label="Email"
+        />
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          aria-label="Password"
+        />
+        <button class="btn" type="submit">Sign in</button>
+      </form>
+      <form id="pinForm" autocomplete="off" hidden>
         <input
           id="pinInput"
           type="password"
@@ -669,7 +692,8 @@
       <div class="panel" data-panel="photos">
         <h2>Photos</h2>
         <p class="hint">
-          Upload a picture for each slot. They're resized and saved as
+          Upload a picture for each slot. With Supabase, photos save to Storage and the link is
+          stored in the site content. With the local server, they save as
           <code>photos/us-1.jpg</code> … <code>photos/us-6.jpg</code>.
         </p>
         <div class="photo-list" id="photosList"></div>
@@ -755,7 +779,8 @@
             <input id="musicUpload" type="file" accept="audio/*" />
           </label>
           <span class="hint" id="musicUploadNote">
-            MP3, M4A, WAV, OGG · max 30 MB. Uploaded songs are saved in <code>music/</code>.
+            MP3, M4A, WAV, OGG · max 30 MB. With Supabase, songs save to Storage. With the local
+            server, they save in <code>music/</code>.
           </span>
         </div>
         <div id="musicTracks"></div>
@@ -806,6 +831,8 @@
 
   <div class="toast" id="toast" hidden></div>
 
+  <script src="supabase-config.js"></script>
+  <script src="cloud.js"></script>
   <script>
     (() => {
       "use strict";
@@ -815,6 +842,9 @@
 
       const state = {
         api: false,
+        cloud: false,
+        user: null,
+        unlocked: false,
         pin: sessionStorage.getItem("cq-admin-pin") || "",
         content: null
       };
@@ -974,12 +1004,7 @@
         return next;
       }
 
-      async function loadContent() {
-        if (state.api) {
-          const data = await request("/api/content", { cache: "no-store" });
-          return data.content;
-        }
-
+      async function loadStaticContent() {
         const response = await fetch("content.js", { cache: "no-store" });
         if (!response.ok) throw new Error("Could not load content.js.");
         const text = await response.text();
@@ -987,6 +1012,27 @@
         const end = text.lastIndexOf("}");
         if (start < 0 || end <= start) throw new Error("content.js looks malformed.");
         return JSON.parse(text.slice(start, end + 1));
+      }
+
+      async function loadContent() {
+        if (state.cloud) {
+          try {
+            const remote = await window.CQCloud.loadContent();
+            if (remote) return remote;
+            showToast("No cloud copy yet. Starting from content.js.");
+          } catch (error) {
+            console.warn("[CQ admin] Cloud load failed:", error);
+            showToast("Could not read the cloud copy. Starting from content.js.", true);
+          }
+          return loadStaticContent();
+        }
+
+        if (state.api) {
+          const data = await request("/api/content", { cache: "no-store" });
+          return data.content;
+        }
+
+        return loadStaticContent();
       }
 
       /* ---------------- Render: static fields ---------------- */
@@ -1432,7 +1478,7 @@
 
           const image = document.createElement("img");
           image.alt = `Photo ${slot}`;
-          image.src = `photos/us-${slot}.jpg?t=${Date.now()}`;
+          image.src = photo.src || `photos/us-${slot}.jpg?t=${Date.now()}`;
           image.addEventListener("error", () => { image.style.display = "none"; });
           image.addEventListener("load", () => { image.style.display = "block"; });
 
@@ -1539,6 +1585,30 @@
         }
         const title = prettySongTitle(file.name);
 
+        if (state.cloud) {
+          try {
+            setStatus("Uploading song to Supabase…");
+            const url = await window.CQCloud.uploadFile(file, "music");
+            const track = {
+              title,
+              artist: "from you",
+              src: url,
+              mood: "warm"
+            };
+            state.content.music.tracks.unshift(track);
+            state.content.music.opening = url;
+            renderTracks();
+            await saveContent();
+            showToast("Song uploaded, saved, and set as the opening track.");
+          } catch (error) {
+            showToast(window.CQCloud.friendlyError(error), true);
+          } finally {
+            setStatus("");
+            fileInput.value = "";
+          }
+          return;
+        }
+
         if (state.api) {
           try {
             setStatus("Uploading song…");
@@ -1592,8 +1662,27 @@
         const file = fileInput.files && fileInput.files[0];
         if (!file) return;
 
+        if (state.cloud) {
+          try {
+            setStatus("Uploading photo to Supabase…");
+            const url = await window.CQCloud.uploadFile(file, "photos");
+            const photo = state.content.photos[slot - 1] || { caption: "" };
+            photo.src = url;
+            state.content.photos[slot - 1] = photo;
+            renderPhotos();
+            await saveContent();
+            showToast(`Photo ${slot} uploaded and saved.`);
+          } catch (error) {
+            showToast(window.CQCloud.friendlyError(error), true);
+          } finally {
+            setStatus("");
+            fileInput.value = "";
+          }
+          return;
+        }
+
         if (!state.api) {
-          showToast("Photo uploads need the local server. Run start-site.bat.", true);
+          showToast("Photo uploads need Supabase or the local server.", true);
           fileInput.value = "";
           return;
         }
@@ -1621,8 +1710,19 @@
       }
 
       async function removePhoto(slot) {
+        if (state.cloud) {
+          if (!window.confirm(`Reset photo ${slot}?`)) return;
+          const photo = state.content.photos[slot - 1] || { caption: "" };
+          delete photo.src;
+          state.content.photos[slot - 1] = photo;
+          renderPhotos();
+          await saveContent();
+          showToast(`Photo ${slot} reset.`);
+          return;
+        }
+
         if (!state.api) {
-          showToast("Photo removal needs the local server.", true);
+          showToast("Photo removal needs Supabase or the local server.", true);
           return;
         }
         if (!window.confirm(`Remove photo ${slot}?`)) return;
@@ -1658,7 +1758,7 @@
       }
 
       async function saveContent() {
-        if (!state.api) {
+        if (!state.cloud && !state.api) {
           downloadContent();
           return;
         }
@@ -1666,18 +1766,29 @@
         try {
           setStatus("Saving…");
           $("#saveBtn").disabled = true;
-          await request("/api/content", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-admin-pin": state.pin
-            },
-            body: JSON.stringify({ content: state.content })
-          });
+
+          if (state.cloud) {
+            if (!state.user) throw new Error("Sign in again, then save.");
+            await window.CQCloud.saveContent(state.content);
+          } else {
+            await request("/api/content", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "x-admin-pin": state.pin
+              },
+              body: JSON.stringify({ content: state.content })
+            });
+          }
+
           setStatus("Saved just now");
-          showToast("Saved. Catie's site is updated.");
+          showToast(
+            state.cloud
+              ? "Saved to Supabase. Catie's site is updated."
+              : "Saved. Catie's site is updated."
+          );
         } catch (error) {
-          showToast(error.message, true);
+          showToast(window.CQCloud ? window.CQCloud.friendlyError(error) : error.message, true);
           setStatus("");
         } finally {
           $("#saveBtn").disabled = false;
@@ -1697,11 +1808,31 @@
         renderExtras();
       }
 
+      function configureGate(mode) {
+        const cloud = mode === "cloud";
+        const local = mode === "local";
+
+        $("#loginForm").hidden = !cloud;
+        $("#pinForm").hidden = !local;
+
+        if (cloud) {
+          $("#gateIntro").innerHTML =
+            "Sign in with one of the two private emails. Only those accounts can edit the site.";
+        } else if (local) {
+          $("#gateIntro").innerHTML =
+            "Enter your PIN to edit Catie's site. It's saved in <code>admin-key.txt</code>.";
+        } else {
+          $("#gateIntro").innerHTML =
+            "Saving is not connected yet. Follow " +
+            '<a href="SUPABASE-SETUP.md">SUPABASE-SETUP.md</a> to turn on saving, login, and chat.';
+        }
+      }
+
       function showGate(message) {
         $("#gate").hidden = false;
         $("#app").hidden = true;
         $("#logoutBtn").hidden = true;
-        if (message) $("#gateMsg").textContent = message;
+        $("#gateMsg").textContent = message || "";
       }
 
       async function unlock() {
@@ -1712,39 +1843,102 @@
           showToast("Could not load content: " + error.message, true);
         }
 
+        state.unlocked = true;
         $("#gate").hidden = true;
         $("#app").hidden = false;
-        $("#logoutBtn").hidden = !state.api;
+        $("#logoutBtn").hidden = !(state.cloud || state.api);
         renderAll();
       }
 
       async function boot() {
+        const cloud = window.CQCloud;
+
+        if (cloud && cloud.configured) {
+          state.cloud = true;
+          state.api = false;
+          $("#modeNote").innerHTML =
+            "<b>Cloud mode.</b> Sign in with one of the two private emails — changes save to Supabase.";
+          $("#saveBtn").textContent = "Save changes";
+          $("#downloadBtn").hidden = true;
+          configureGate("cloud");
+          showGate("Checking sign-in…");
+
+          cloud.onAuth(async (user) => {
+            if (!user) {
+              state.user = null;
+              state.unlocked = false;
+              showGate();
+              return;
+            }
+
+            if (!cloud.isAllowed(user.email)) {
+              await cloud.signOut();
+              showGate("That email is not one of the two private accounts.");
+              return;
+            }
+
+            if (state.user && state.user.uid === user.uid && state.unlocked) return;
+
+            state.user = user;
+            await unlock();
+            $("#logoutBtn").hidden = false;
+          });
+
+          return;
+        }
+
+        state.cloud = false;
         state.api = await checkApi();
 
         if (state.api) {
           $("#modeNote").innerHTML =
             "<b>Live mode.</b> Connected to the local server — changes save straight to the site.";
-        } else {
-          $("#modeNote").innerHTML =
-            "<b>Static mode.</b> No local server detected. You can still edit and " +
-            "download <code>content.js</code>, then upload it to your host.";
-          $("#saveBtn").textContent = "Download content.js";
-        }
+          configureGate("local");
 
-        if (!state.api) {
-          await unlock();
+          if (state.pin && (await verifyPin(state.pin))) {
+            await unlock();
+            return;
+          }
+
+          showGate();
           return;
         }
 
-        if (state.pin && (await verifyPin(state.pin))) {
-          await unlock();
-          return;
-        }
-
-        showGate();
+        $("#modeNote").innerHTML =
+          "<b>Not connected.</b> Add Supabase (see <code>SUPABASE-SETUP.md</code>) to save from the " +
+          "live site. For now, changes download as <code>content.js</code>.";
+        configureGate("setup");
+        $("#saveBtn").textContent = "Download content.js";
+        await unlock();
       }
 
       /* ---------------- Events ---------------- */
+
+      $("#loginForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const email = $("#loginEmail").value.trim();
+        const password = $("#loginPassword").value;
+        if (!email || !password) {
+          $("#gateMsg").textContent = "Enter your email and password.";
+          return;
+        }
+
+        $("#gateMsg").textContent = "";
+        const button = $("#loginForm button");
+        button.disabled = true;
+        button.textContent = "Signing in…";
+
+        try {
+          await window.CQCloud.signIn(email, password);
+          $("#loginPassword").value = "";
+        } catch (error) {
+          $("#gateMsg").textContent = window.CQCloud.friendlyError(error);
+        } finally {
+          button.disabled = false;
+          button.textContent = "Sign in";
+        }
+      });
 
       $("#pinForm").addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -1769,8 +1963,15 @@
         await unlock();
       });
 
-      $("#logoutBtn").addEventListener("click", () => {
+      $("#logoutBtn").addEventListener("click", async () => {
         sessionStorage.removeItem("cq-admin-pin");
+        if (state.cloud && window.CQCloud) {
+          try {
+            await window.CQCloud.signOut();
+          } catch (error) {
+            /* reload anyway */
+          }
+        }
         window.location.reload();
       });
 
