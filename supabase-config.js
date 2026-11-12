@@ -13,8 +13,8 @@
    ========================================================================== */
 
 window.CQ_SUPABASE_CONFIG = {
-  url: "https://YOUR_PROJECT_REF.supabase.co",
-  anonKey: "YOUR_ANON_KEY"
+  url: "https://lsgnmzzouyevrfjybreg.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZ25tenpvdXlldnJmanlicmVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0NDYwMzMsImV4cCI6MjExMDAyMjAzM30._vq_sosCWBfOFXxwy1HSLtVJHVuynFDNva3P5u9Mvr0"
 };
 
 /* Only these two accounts can open the admin or the private chat.
