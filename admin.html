@@ -151,6 +151,25 @@
 
     .gate input:focus { outline: 2px solid #ffb8cf; outline-offset: 1px; }
 
+    .gate-small {
+      margin: -0.8rem auto 1rem !important;
+      font-size: 0.78rem !important;
+    }
+
+    .reveal-btn {
+      align-self: center;
+      padding: 0.1rem 0.2rem;
+      border: 0;
+      background: none;
+      color: var(--ink-soft);
+      font: inherit;
+      font-size: 0.78rem;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .reveal-btn:hover { color: var(--rose-deep); }
+
     .msg {
       min-height: 1.4em;
       margin: 0.9rem 0 0 !important;
@@ -598,12 +617,18 @@
       <p id="gateIntro">
         Sign in with one of the two private emails. Only those accounts can edit the site.
       </p>
+      <p class="gate-small">
+        These are <b>site</b> logins — not your Supabase dashboard account.
+      </p>
       <form id="loginForm" autocomplete="on">
         <input
           id="loginEmail"
           type="email"
           placeholder="Email"
           autocomplete="username"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
           aria-label="Email"
         />
         <input
@@ -611,8 +636,14 @@
           type="password"
           placeholder="Password"
           autocomplete="current-password"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
           aria-label="Password"
         />
+        <button class="reveal-btn" type="button" id="revealLoginPassword">
+          Show password
+        </button>
         <button class="btn" type="submit">Sign in</button>
       </form>
       <form id="pinForm" autocomplete="off" hidden>
@@ -831,8 +862,8 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="supabase-config.js"></script>
-  <script src="cloud.js"></script>
+  <script src="supabase-config.js?v=20261112-2"></script>
+  <script src="cloud.js?v=20261112-2"></script>
   <script>
     (() => {
       "use strict";
@@ -1914,18 +1945,27 @@
 
       /* ---------------- Events ---------------- */
 
+      $("#revealLoginPassword").addEventListener("click", () => {
+        const field = $("#loginPassword");
+        const showing = field.type === "text";
+        field.type = showing ? "password" : "text";
+        $("#revealLoginPassword").textContent = showing ? "Show password" : "Hide password";
+        field.focus();
+      });
+
       $("#loginForm").addEventListener("submit", async (event) => {
         event.preventDefault();
 
         const email = $("#loginEmail").value.trim();
-        const password = $("#loginPassword").value;
+        /* Trim stray spaces from password managers / mobile keyboards. */
+        const password = $("#loginPassword").value.trim();
         if (!email || !password) {
           $("#gateMsg").textContent = "Enter your email and password.";
           return;
         }
 
         $("#gateMsg").textContent = "";
-        const button = $("#loginForm button");
+        const button = $("#loginForm button[type=submit]");
         button.disabled = true;
         button.textContent = "Signing in…";
 
@@ -1933,7 +1973,9 @@
           await window.CQCloud.signIn(email, password);
           $("#loginPassword").value = "";
         } catch (error) {
-          $("#gateMsg").textContent = window.CQCloud.friendlyError(error);
+          $("#gateMsg").textContent =
+            `${window.CQCloud.friendlyError(error)} ` +
+            `(Tried “${email}” with a ${password.length}-character password.)`;
         } finally {
           button.disabled = false;
           button.textContent = "Sign in";

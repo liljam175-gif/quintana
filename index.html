@@ -2113,6 +2113,20 @@
       outline-offset: 1px;
     }
 
+    .chat-reveal {
+      justify-self: start;
+      padding: 0.1rem 0.2rem;
+      border: 0;
+      background: none;
+      color: var(--ink-soft);
+      font: inherit;
+      font-size: 0.78rem;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .chat-reveal:hover { color: var(--rose-deep); }
+
     .chat-hint {
       margin: 1rem 0 0;
       font-size: 0.76rem;
@@ -2879,6 +2893,9 @@
                 type="email"
                 placeholder="Email"
                 autocomplete="username"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
                 required
               />
               <input
@@ -2886,8 +2903,14 @@
                 type="password"
                 placeholder="Password"
                 autocomplete="current-password"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
                 required
               />
+              <button class="chat-reveal" type="button" id="chatRevealPassword">
+                Show password
+              </button>
               <button class="btn" type="submit">Sign in</button>
             </form>
             <p class="chat-hint" id="chatHint">
@@ -2996,8 +3019,8 @@
     </p>
   </footer>
 
-  <script src="supabase-config.js"></script>
-  <script src="cloud.js"></script>
+  <script src="supabase-config.js?v=20261112-2"></script>
+  <script src="cloud.js?v=20261112-2"></script>
   <script src="content.js"></script>
   <script>
     (async () => {
@@ -3999,8 +4022,8 @@
         });
       }
 
-      await loadScript("features.js");
-      await loadScript("chat.js");
+      await loadScript("features.js?v=20261112-2");
+      await loadScript("chat.js?v=20261112-2");
     })();
   </script>
 </body>

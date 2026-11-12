@@ -238,18 +238,29 @@
     hint.textContent = "Sign in once on this device. The chat stays live while the page is open.";
   }
 
+  const revealPassword = document.getElementById("chatRevealPassword");
+  if (revealPassword) {
+    revealPassword.addEventListener("click", () => {
+      const showing = passwordInput.type === "text";
+      passwordInput.type = showing ? "password" : "text";
+      revealPassword.textContent = showing ? "Show password" : "Hide password";
+      passwordInput.focus();
+    });
+  }
+
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     loginMsg.textContent = "";
 
     const email = emailInput.value.trim();
-    const password = passwordInput.value;
+    /* Trim stray spaces from password managers / mobile keyboards. */
+    const password = passwordInput.value.trim();
     if (!email || !password) {
       loginMsg.textContent = "Enter your email and password.";
       return;
     }
 
-    const button = loginForm.querySelector("button");
+    const button = loginForm.querySelector("button[type=submit]");
     button.disabled = true;
     button.textContent = "Signing in…";
 
@@ -257,7 +268,9 @@
       await cloud.signIn(email, password);
       passwordInput.value = "";
     } catch (error) {
-      loginMsg.textContent = cloud.friendlyError(error);
+      loginMsg.textContent =
+        `${cloud.friendlyError(error)} ` +
+        `(Tried “${email}” with a ${password.length}-character password.)`;
     } finally {
       button.disabled = false;
       button.textContent = "Sign in";
