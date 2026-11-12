@@ -227,3 +227,94 @@ create policy "cq storage delete"
     bucket_id in ('music', 'photos')
     and public.cq_is_allowed()
   );
+
+-- 6. Shared media wall ------------------------------------------------------
+-- Photos, videos, audio, and shared locations for the "Wall" section.
+
+create table if not exists public.media (
+  id uuid primary key default gen_random_uuid(),
+  kind text not null default 'image',
+  name text not null default '',
+  url text not null default '',
+  caption text not null default '',
+  lat double precision,
+  lng double precision,
+  sender text not null,
+  sender_name text not null default '',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists media_created_at_idx
+  on public.media (created_at desc);
+
+alter table public.media enable row level security;
+
+drop policy if exists "media read" on public.media;
+create policy "media read"
+  on public.media
+  for select
+  to authenticated
+  using (public.cq_is_allowed());
+
+drop policy if exists "media insert" on public.media;
+create policy "media insert"
+  on public.media
+  for insert
+  to authenticated
+  with check (
+    public.cq_is_allowed()
+    and lower(sender) = lower(auth.jwt() ->> 'email')
+  );
+
+drop policy if exists "media delete" on public.media;
+create policy "media delete"
+  on public.media
+  for delete
+  to authenticated
+  using (public.cq_is_allowed());
+
+do $$
+begin
+  alter publication supabase_realtime add table public.media;
+exception
+  when duplicate_object then null;
+end $$;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'media',
+  'media',
+  true,
+  52428800,
+  array[
+    'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/heic', 'image/heif',
+    'video/mp4', 'video/webm', 'video/quicktime', 'video/x-m4v',
+    'audio/mpeg', 'audio/mp4', 'audio/aac', 'audio/wav', 'audio/x-wav',
+    'audio/ogg', 'audio/webm', 'audio/flac'
+  ]
+)
+on conflict (id) do update
+set public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "cq media storage read" on storage.objects;
+create policy "cq media storage read"
+  on storage.objects
+  for select
+  to anon, authenticated
+  using (bucket_id = 'media');
+
+drop policy if exists "cq media storage insert" on storage.objects;
+create policy "cq media storage insert"
+  on storage.objects
+  for insert
+  to authenticated
+  with check (bucket_id = 'media' and public.cq_is_allowed());
+
+drop policy if exists "cq media storage delete" on storage.objects;
+create policy "cq media storage delete"
+  on storage.objects
+  for delete
+  to authenticated
+  using (bucket_id = 'media' and public.cq_is_allowed());

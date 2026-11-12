@@ -1,6 +1,13 @@
-# Supabase setup (one time)
+# Supabase setup
 
-Supabase is the free backend that lets the **live** site save changes, host uploads, and run the private two-person chat. You only have to do this once. It takes about 10 minutes.
+> **Status: done.** The live site is already connected to the Supabase project
+> `lsgnmzzouyevrfjybreg` (`https://lsgnmzzouyevrfjybreg.supabase.co`, region
+> `eu-west-1`). The tables, security rules, realtime, the `music`/`photos`
+> buckets, and both accounts all exist, and public sign-ups are turned off.
+> Keep this page for reference — you only need it if you ever move the site to
+> a new Supabase project or need to re-run the setup.
+
+Supabase is the free backend that lets the **live** site save changes, host uploads, and run the private two-person chat. Setting it up from scratch takes about 10 minutes.
 
 You need:
 
@@ -46,8 +53,9 @@ That creates:
 - `site_content` — the saved site copy
 - `messages` — the private chat
 - `notifications` — the “nudge me to play” banners
-- realtime on chat/nudges
-- the public `music` and `photos` storage buckets
+- `media` — the shared wall (photos, videos, audio, places)
+- realtime on chat, nudges, and the wall
+- the public `music`, `photos`, and `media` storage buckets
 - security rules that allow only the two emails to write
 
 If you change an email later, update it in **both** `supabase-setup.sql` and `supabase-config.js`, then run the SQL again.

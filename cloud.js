@@ -309,6 +309,22 @@
     };
   }
 
+  function mapMedia(row) {
+    return {
+      id: row.id,
+      kind: row.kind || "image",
+      name: row.name || "",
+      src: row.url || "",
+      caption: row.caption || "",
+      lat: row.lat,
+      lng: row.lng,
+      sender: row.sender || "",
+      senderName: row.sender_name || "",
+      createdAt: row.created_at || null,
+      cloud: true
+    };
+  }
+
   async function fetchMessages() {
     const { data, error } = await client
       .from("messages")
@@ -447,6 +463,109 @@
     return row.id;
   }
 
+  async function fetchMedia() {
+    await ready;
+    if (!client) return [];
+
+    const { data, error } = await client
+      .from("media")
+      .select("id, kind, name, url, caption, lat, lng, sender, sender_name, created_at")
+      .order("created_at", { ascending: true })
+      .limit(200);
+
+    if (error) throw error;
+    return (data || []).map(mapMedia);
+  }
+
+  async function watchMedia(callback, onError) {
+    await ready;
+    if (!client || typeof callback !== "function") return () => {};
+
+    let active = true;
+    let channel = null;
+
+    const emit = async () => {
+      try {
+        const items = await fetchMedia();
+        if (active) callback(items);
+      } catch (error) {
+        if (typeof onError === "function") onError(error);
+      }
+    };
+
+    emit();
+
+    channel = client
+      .channel("cq-media")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "media" },
+        () => emit()
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      if (channel) client.removeChannel(channel);
+    };
+  }
+
+  async function sendMedia(item) {
+    await ready;
+    if (!client) {
+      throw new Error("Supabase is not configured yet. Add your URL and anon key to supabase-config.js.");
+    }
+
+    const user = requireAllowed();
+    const data = item && typeof item === "object" ? item : {};
+
+    const { data: row, error } = await client
+      .from("media")
+      .insert({
+        kind: String(data.kind || "image").slice(0, 16),
+        name: String(data.name || "").slice(0, 200),
+        url: String(data.src || data.url || "").slice(0, 1000),
+        caption: String(data.caption || "").slice(0, 500),
+        lat: typeof data.lat === "number" ? data.lat : null,
+        lng: typeof data.lng === "number" ? data.lng : null,
+        sender: user.email,
+        sender_name: user.displayName
+      })
+      .select("id")
+      .single();
+
+    if (error) throw error;
+    return row.id;
+  }
+
+  async function deleteMedia(id, url) {
+    await ready;
+    if (!client) {
+      throw new Error("Supabase is not configured yet.");
+    }
+
+    requireAllowed();
+
+    const { error } = await client.from("media").delete().eq("id", id);
+    if (error) throw error;
+
+    /* Best effort: also remove the stored file, if we can find its path. */
+    const marker = "/object/public/media/";
+    const at = String(url || "").indexOf(marker);
+    if (at >= 0) {
+      const path = decodeURIComponent(String(url).slice(at + marker.length).split("?")[0]);
+      if (path) {
+        try {
+          await client.storage.from("media").remove([path]);
+        } catch (error) {
+          /* the row is gone; an orphaned file is harmless */
+        }
+      }
+    }
+
+    return true;
+  }
+
   async function uploadFile(file, folder) {
     await ready;
     if (!client) {
@@ -455,7 +574,9 @@
 
     requireAllowed();
 
-    const bucket = String(folder || "").toLowerCase() === "music" ? "music" : "photos";
+    const bucket = ["music", "photos", "media"].includes(String(folder || "").toLowerCase())
+      ? String(folder).toLowerCase()
+      : "photos";
     const safeName = String(file.name || "upload")
       .replace(/[^a-zA-Z0-9._-]+/g, "-")
       .replace(/^-+|-+$/g, "")
@@ -491,6 +612,10 @@
     sendMessage,
     watchNotifications,
     sendNotification,
+    fetchMedia,
+    watchMedia,
+    sendMedia,
+    deleteMedia,
     uploadFile
   };
 })();

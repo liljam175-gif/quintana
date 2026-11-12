@@ -21,7 +21,7 @@ Keep the black window open while the site is running.
 - **On the public site:** open <https://liljam175-gif.github.io/quintana/admin.html> and sign in with one of the two private emails. Changes save straight to Supabase.
 - **Locally:** open <http://localhost:8080/admin.html> and enter the PIN from **`admin-key.txt`** (created on first run).
 
-The email login and cloud saving need the one-time Supabase setup in **`SUPABASE-SETUP.md`**.
+The email login and cloud saving are already connected to Supabase. If you ever move the site to a new project, follow **`SUPABASE-SETUP.md`**.
 
 You can edit:
 
@@ -71,8 +71,8 @@ Setup: see **`SUPABASE-SETUP.md`**.
 
 The **Wall** section accepts photos, videos, and audio, plus a **Share my location** button.
 
-- With `server.js` running, uploads are saved in `media/` and both of you see them.
-- On GitHub Pages, uploads stay on that device in IndexedDB. True cross-device sharing needs the local server.
+- Sign in to the private chat first. On the live site, uploads go to Supabase Storage and appear on the wall for both of you, live.
+- Without Supabase (or when signed out), uploads use the local server when it is running, or stay on that device in IndexedDB.
 
 ### Photos
 

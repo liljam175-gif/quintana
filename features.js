@@ -898,7 +898,10 @@
 
   let mediaItems = [];
   let serverMedia = [];
+  let cloudItems = [];
+  let localItems = [];
   let serverMode = null;
+  let cloudMediaStop = null;
 
   function openDb() {
     return new Promise((resolve, reject) => {
@@ -1125,11 +1128,36 @@
           }
         });
         body.appendChild(remove);
+      } else if (item.cloud && window.CQCloud && window.CQCloud.currentUser()) {
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "media-remove";
+        remove.textContent = "Remove";
+        remove.addEventListener("click", async () => {
+          try {
+            await window.CQCloud.deleteMedia(item.id, item.src);
+            cloudItems = cloudItems.filter((entry) => entry.id !== item.id);
+            rebuildMedia();
+            toast("Removed for both of us.");
+          } catch (error) {
+            toast("Could not remove that item.", true);
+          }
+        });
+        body.appendChild(remove);
       }
 
       card.appendChild(body);
       mediaGrid.appendChild(card);
     });
+  }
+
+  function rebuildMedia() {
+    mediaItems = [
+      ...serverMedia.map((item) => ({ ...item, local: false })),
+      ...cloudItems.map((item) => ({ ...item, local: false })),
+      ...localItems.map((item) => ({ ...item, local: true }))
+    ];
+    renderMedia();
   }
 
   async function loadMedia(showToast) {
@@ -1148,17 +1176,29 @@
       }
     }
 
-    const localItems = await idbAll();
-    mediaItems = [
-      ...serverMedia.map((item) => ({ ...item, local: false })),
-      ...localItems.map((item) => ({ ...item, local: true }))
-    ];
-    renderMedia();
+    localItems = await idbAll();
+
+    const cloud = window.CQCloud;
+    if (cloud && cloud.configured) {
+      try {
+        cloudItems = await cloud.fetchMedia();
+      } catch (error) {
+        cloudItems = [];
+      }
+    }
+
+    rebuildMedia();
 
     if (mediaStatus) {
-      mediaStatus.textContent = serverMode
-        ? "Uploads save to the site so both of us can see them."
-        : "Uploads save to this device. Run the local server to share them with me.";
+      if (cloud && cloud.configured) {
+        mediaStatus.textContent = cloud.currentUser()
+          ? "Uploads save to Supabase so both of us can see them."
+          : "Sign in to the chat above to share photos, videos, audio, and places.";
+      } else {
+        mediaStatus.textContent = serverMode
+          ? "Uploads save to the site so both of us can see them."
+          : "Uploads save to this device. Run the local server to share them with me.";
+      }
     }
     if (showToast) toast("Wall refreshed.");
   }
@@ -1166,6 +1206,35 @@
   async function uploadBlob(blob, kind, name, meta) {
     if (!blob) return null;
     if (mediaStatus) mediaStatus.textContent = "Saving…";
+
+    const cloud = window.CQCloud;
+    if (cloud && cloud.configured) {
+      if (!cloud.currentUser()) {
+        if (mediaStatus) mediaStatus.textContent = "Sign in to the chat above to share.";
+        toast("Sign in to the chat above, then share with me 💗", true);
+        return null;
+      }
+
+      try {
+        const file = new File([blob], name || kindLabel(kind), {
+          type: blob.type || "application/octet-stream"
+        });
+        const src = await cloud.uploadFile(file, "media");
+        await cloud.sendMedia({
+          kind,
+          name: name || kindLabel(kind),
+          src,
+          caption: (meta && meta.caption) || ""
+        });
+        if (mediaStatus) mediaStatus.textContent = "Saved for both of us.";
+        toast("Added to the us wall.");
+        return { kind, src };
+      } catch (error) {
+        if (mediaStatus) mediaStatus.textContent = "Upload failed.";
+        toast(cloud.friendlyError(error), true);
+        return null;
+      }
+    }
 
     if (await detectServer()) {
       try {
@@ -1275,6 +1344,18 @@
           /* keep the generic label */
         }
 
+        const cloud = window.CQCloud;
+        if (cloud && cloud.configured && cloud.currentUser()) {
+          try {
+            await cloud.sendMedia({ kind: "location", name: label, lat, lng });
+            if (mediaStatus) mediaStatus.textContent = "Location shared with both of us.";
+            toast("Location pinned to the wall.");
+            return;
+          } catch (error) {
+            toast(cloud.friendlyError(error), true);
+          }
+        }
+
         if (await detectServer()) {
           try {
             const response = await fetch("/api/location", {
@@ -1332,8 +1413,43 @@
   });
 
   // Load the wall after the page has painted.
+  function startCloudMedia() {
+    if (cloudMediaStop) {
+      try {
+        cloudMediaStop();
+      } catch (error) {
+        /* already gone */
+      }
+      cloudMediaStop = null;
+    }
+
+    const cloud = window.CQCloud;
+    if (!cloud || !cloud.configured) return;
+
+    cloud
+      .watchMedia(
+        (items) => {
+          cloudItems = items;
+          rebuildMedia();
+        },
+        () => {}
+      )
+      .then((stop) => {
+        cloudMediaStop = stop;
+      })
+      .catch(() => {});
+  }
+
   if (mediaGrid) {
     window.setTimeout(() => loadMedia(false), 700);
+
+    if (window.CQCloud && window.CQCloud.configured) {
+      window.CQCloud.onAuth(() => {
+        startCloudMedia();
+        loadMedia(false);
+      });
+      startCloudMedia();
+    }
   }
 
   /* ======================================================================
